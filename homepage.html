@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link href="https://fonts.googleapis.com/css?family=Overpass+Mono:400,700" rel="stylesheet">
+
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo.css" />
+
+	<!--	<link rel="stylesheet" href="css/materialize.min.css"/>-->
+	  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+		<script>document.documentElement.className = 'js';</script>
+  
+  
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  
+
+<style>
+.shift{
+	position:absolute;
+	left:22em;
+}
+
+
+.tabs-left > .nav-tabs {
+  border-bottom: 0;
+}
+
+#myModal2 > div:nth-child(1)
+{
+width:60em;
+}
+
+#myModal1 > div:nth-child(1)
+{
+width:60em;
+}
+
+.modal-body{
+padding:0px;
+height:42em;
+}
+#myModal{
+margin-top:7em;
+
+}
+.tab-content > .tab-pane,
+.pill-content > .pill-pane {
+  display: none;
+}
+
+.tab-content > .active,
+.pill-content > .active {
+  display: block;
+}
+
+.tabs-left > .nav-tabs > li {
+  float: none;
+}
+
+.tabs-left > .nav-tabs > li > a {
+  min-width: 74px;
+  margin-right: 0;
+  margin-bottom: 3px;
+}
+
+.tabs-left > .nav-tabs {
+  float: left;
+  height:100%;
+  margin-right: 19px;
+  border-right: 1px solid #ddd;
+}
+.col-xs-12{
+	height:100%;	
+}
+.nav .nav-tabs{
+	height: 30em;
+}
+
+.tabs-left > .nav-tabs > li > a {
+  margin-right: -1px;
+  -webkit-border-radius: 4px 0 0 4px;
+     -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+}
+
+.tabs-left > .nav-tabs > li > a:hover,
+.tabs-left > .nav-tabs > li > a:focus {
+  border-color: #eeeeee #dddddd #eeeeee #eeeeee;
+}
+
+.tabs-left > .nav-tabs .active > a,
+.tabs-left > .nav-tabs .active > a:hover,
+.tabs-left > .nav-tabs .active > a:focus {
+  border-color: #ddd #ddd #ddd #ddd;
+  *border-right-color: #ffffff;
+}
+.modal-header {
+  text-align: center;
+}
+
+.modal-footer {
+  background-color:#F7F7F7;
+}
+
+.tab-img {
+  padding: 10px 50px 10px 50px;
+}
+</style>
+
+	</head>
+	<body>
+
+	        <div id="myModal1" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                 
+          <div class="modal-body">
+            <div class="row" style="height:100%;">
+        		<div class="col-xs-12">
+        			<!-- tabs -->
+        			<div class="tabbable tabs-left">
+        				<ul class="nav nav-tabs" style="height:38em;">
+        				    <li class="active"><a href="#home" data-toggle="tab">Binary Tree</a></li>
+        					<li><a href="#about" data-toggle="tab">AVL Tree</a></li>
+        						</ul>
+        				<div class="tab-content">
+        					<div class="tab-pane active" id="home" align="center">                
+        						<div class="" style="height:40em; overflow:auto;">
+        							<h1 align="center">Binary Tree</h1>
+        							<p align="left">Binary Tree is a special datastructure used for data storage purposes. A binary tree has a special condition that each node can have a maximum of two children. A binary tree has the benefits of both an ordered array and a linked list as search is as quick as in a sorted array and insertion or deletion operation are as fast as in linked list.
+													<br><br>// C function to search a given key in a given BST
+														<br>struct node* search(struct node* root, int key)
+														<br>{
+															<br>// Base Cases: root is null or key is present at root
+															<br>if (root == NULL || root->key == key)
+															   <br>return root;<br>
+															
+														<br>	// Key is greater than root's key
+															<br>if (root->key < key)
+														<br>	  return search(root->right, key);<br>
+														 
+															<br>// Key is smaller than root's key
+															<br>return search(root->left, key);<br>
+														}
+														</p>                 
+									<a href="tree.html"><button  class="btn btn-primary">Visualize</button></a>
+								</div>
+        					</div> 
+        					<div class="tab-pane" id="about"> 
+        						<div class="" style="height:40em; overflow:auto;" align="center">
+        							<h1>AVL Tree</h1>
+        							<p align="left"> In computer science, an AVL tree is a self-balancing binary search tree. It was the first such data structure to be invented. In an AVL tree, the heights of the two child subtrees of any node differ by at most one; if at any time they differ by more than one, rebalancing is done to restore this property. Lookup, insertion, and deletion all take O(log n) time in both the average and worst cases, where n is the number of nodes in the tree prior to the operation. Insertions and deletions may require the tree to be rebalanced by one or more tree rotations.
+									<br>
+										<br>
+										1) Add Node
+										<br>
+										2) Calculate Balance Factor
+										<br>
+										3) Rotate Tree<br>
+										4) Update Balance factor
+<br><br>
+										
+										
+									</p>                 
+        						<a href="avl.html"><button  class="btn btn-primary">Visualize</button></a>
+								</div>
+        					</div>
+        				
+        				</div>
+        			</div>
+        			<!-- /tabs -->
+        		</div>
+        	</div>
+          </div>
+             </div>
+            </div>
+        </div>
+		
+			<div id="myModal2" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                 
+          <div class="modal-body">
+            <div class="row" style="height:100%;">
+        		<div class="col-xs-12">
+        			<!-- tabs -->
+        			<div class="tabbable tabs-left">
+        				<ul class="nav nav-tabs" style="height:38em;">
+        				    <li class="active"><a href="#tab21" data-toggle="tab">Bubble Sort</a></li>
+        					<li><a href="#tab22" data-toggle="tab">Selection Sort</a></li>
+							<li><a href="#tab23" data-toggle="tab">Insertion Sort</a></li>
+							<li><a href="#tab24" data-toggle="tab">Quick Sort</a></li>
+							<li><a href="#tab25" data-toggle="tab">Merge Sort</a></li>
+        						</ul>
+        				<div class="tab-content">
+							<h1 align="left">Sorting</h1>
+        					<div class="tab-pane active" id="tab21" align="center">                
+        						<div class="" style="height:35em; overflow:auto;">
+        							<h2 align="center">Bubble Sort</h2>
+        							<p align="left">
+									Bubble sort, sometimes referred to as sinking sort, is a simple sorting algorithm that repeatedly steps through the list to be sorted, compares each pair of adjacent items and swaps them if they are in the wrong order. The pass through the list is repeated until no swaps are needed, which indicates that the list is sorted. The algorithm, which is a comparison sort, is named for the way smaller or larger elements "bubble" to the top of the list. Although the algorithm is simple, it is too slow and impractical for most problems even when compared to insertion sort.[2] It can be practical if the input is usually in sorted order but may occasionally have some out-of-order elements nearly in position.
+		<br>												
+									<br>procedure bubbleSort( A : list of sortable items )
+									<br>	n = length(A)
+										<br>repeat 
+											<br>swapped = false
+											<br>for i = 1 to n-1 inclusive do
+												<br>/* if this pair is out of order */
+												<br>if A[i-1] > A[i] then
+													<br>/* swap them and remember something changed */
+													<br>swap( A[i-1], A[i] )
+													<br>swapped = true
+												<br>end if
+											<br>end for
+										<br>until not swapped
+									<br>end procedure																													
+										<br>																												
+																																														
+									</p>                 
+        						
+									<a href="bubble.html"><button  class="btn btn-primary">Visualize</button></a>
+								</div>
+        					</div> 
+        					<div class="tab-pane" id="tab22"> 
+        						<div class="" style="height:35em; overflow:auto;">
+        							<h2 align="center">Selection Sort</h2>
+        							<p>      In computer science, selection sort is a sorting algorithm, specifically an in-place comparison sort. It has O(n2) time complexity, making it inefficient on large lists, and generally performs worse than the similar insertion sort. Selection sort is noted for its simplicity, and it has performance advantages over more complicated algorithms in certain situations, particularly where auxiliary memory is limited.											 
+											 The algorithm divides the input list into two parts: the sublist of items already sorted, which is built up from left to right at the front (left) of the list, and the sublist of items remaining to be sorted that occupy the rest of the list. Initially, the sorted sublist is empty and the unsorted sublist is the entire input list. The algorithm proceeds by finding the smallest (or largest, depending on sorting order) element in the unsorted sublist, exchanging (swapping) it with the leftmost unsorted element (putting it in sorted order), and moving the sublist boundaries one element to the right.
+										
+									      <br>/*a[0] to a[n-1] is the array to sort */<br>
+											int i,j;<br>
+											int n;<br>
+
+											/* advance the position through the entire array */<br>
+											/*   (could do j < n-1 because single element is also min element) */<br>
+											for (j = 0; j < n-1; j++) <br>
+											  {<br>
+												/* find the min element in the unsorted a[j .. n-1] */<br>
+<br>
+												/* assume the min is the first element */<br>
+												int iMin = j;<br>
+												/* test against elements after j to find the smallest */<br>
+												for (i = j+1; i < n; i++) {<br>
+													/* if this element is less, then it is the new minimum */<br>
+													if (a[i] < a[iMin]) {<br>
+														/* found new minimum; remember its index */<br>
+														iMin = i;<br>
+													}<br>
+												}<br>
+
+												if(iMin != j)<br> 
+												{<br>
+													swap(a[j], a[iMin]);<br>
+												}<br>
+											}<br>
+										
+										
+										</p>
+                   					<a href="selection_sort.html"><button class="btn btn-primary" align="center">Vizualise</button></a>
+								</div>
+        					</div>
+							<div class="tab-pane" id="tab23" align="center">                
+        						<div class= style="height:40em; overflow:auto;">
+        							<h2 align="center">Insertion Sort</h2>
+        							<p align="left">
+									
+									
+									<br>Insertion sort is a simple sorting algorithm that builds the final sorted array (or list) one item at a time. It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort.
+									
+									
+										<br>	
+											
+											
+									<br>for i = 1 to length(A)
+									<br>	j ← i
+										<br>while j > 0 and A[j-1] > A[j]
+											<br>swap A[j] and A[j-1]
+											<br>j ← j - 1
+										<br>end while
+									<br>end for<br>
+																			
+									</p>                 
+        						
+									<a href="insertion.html"><button  class="btn btn-primary">Visualize</button></a>
+								</div>
+        				
+							</div>
+							<div class="tab-pane" id="tab24" align="center">                
+        						<div class="" style="height:35em; overflow:auto;">
+        							<h2 align="center">Quick Sort</h2>
+        							<p align="left">
+									Quicksort (sometimes called partition-exchange sort) is an efficient sorting algorithm, serving as a systematic method for placing the elements of an array in order. Developed by Tony Hoare in 1959[1] and published in 1961, it is still a commonly used algorithm for sorting. When implemented well, it can be about two or three times faster than its main competitors, merge sort and heapsort.
+									Quicksort is a comparison sort, meaning that it can sort items of any type for which a "less-than" relation (formally, a total order) is defined. In efficient implementations it is not a stable sort, meaning that the relative order of equal sort items is not preserved. Quicksort can operate in-place on an array, requiring small additional amounts of memory to perform the sorting.
+									Mathematical analysis of quicksort shows that, on average, the algorithm takes O(n log n) comparisons to sort n items. In the worst case, it makes O(n2) comparisons, though this behavior is rare
+									<br>
+																			<br>algorithm quicksort(A, lo, hi) is
+										<br>										if lo < hi then
+											<br>										p := partition(A, lo, hi)
+												<br>									quicksort(A, lo, p – 1)
+													<br>								quicksort(A, p + 1, hi)
+
+														<br>					algorithm partition(A, lo, hi) is
+															<br>					pivot := A[hi]
+																<br>				i := lo - 1    
+																	<br>			for j := lo to hi - 1 do
+																		<br>			if A[j] ≤ pivot then
+																			<br>			i := i + 1
+																				<br>		swap A[i] with A[j]
+																				<br>swap A[i+1] with A[hi]
+																				<br>return i + 1
+																					<br>							
+									
+									
+									
+									</p>                 
+        						
+									<a href="quick.html"><button  class="btn btn-primary">Visualize</button></a>
+								</div>
+        				
+							</div>
+							<div class="tab-pane" id="tab25" align="center">                
+        						<div class="" style="height:35em; overflow:auto;">
+        							<h2 align="center">Merge Sort</h2>
+        							<p align="left">
+									
+									In computer science, merge sort (also commonly spelled mergesort) is an efficient, general-purpose, comparison-based sorting algorithm. Most implementations produce a stable sort, which means that the implementation preserves the input order of equal elements in the sorted output. Mergesort is a divide and conquer algorithm that was invented by John von Neumann in 1945. A detailed description and analysis of bottom-up mergesort appeared in a report by Goldstine and Neumann as early as 1948.
+									Conceptually, a merge sort works as follows:
+									Divide the unsorted list into n sublists, each containing 1 element (a list of 1 element is considered sorted).
+									Repeatedly merge sublists to produce new sorted sublists until there is only 1 sublist remaining. This will be the sorted list
+										<br><br>							
+									
+									 <br>function merge_sort(list m)
+									<br>// Base case. A list of zero or one elements is sorted, by definition.
+									<br>if length of m ≤ 1 then
+										<br>return m
+
+									<br>// Recursive case. First, divide the list into equal-sized sublists
+									<br>// consisting of the first half and second half of the list.
+									<br>// This assumes lists start at index 0.
+									<br>var left := empty list
+									<br>var right := empty list
+									<br>for each x with index i in m do
+										<br>if i < (length of m)/2 then
+											<br>add x to left
+										<br>else
+											<br>add x to right
+
+									<br>// Recursively sort both sublists.
+									<br>left := merge_sort(left)
+									<br>right := merge_sort(right)
+<br>
+	<br>								// Then merge the now-sorted sublists.
+		<br>							return merge(left, right)<br>
+									</p>                 
+        						
+									<a href="merge.html"><button  class="btn btn-primary">Visualize</button></a>
+								</div>
+        				
+							</div>
+        			</div>
+        			<!-- /tabs -->
+        		</div>
+        	</div>
+          </div>
+             </div>
+            </div>
+        </div>
+	
+	
+	</div>
+
+
+	
+		<main style="background-color:#18696c;">
+			
+
+
+		<header class="codrops-header" style="background-color:#f5f5f5;">
+				<div class="codrops-links">
+				</div>
+				<span class="codrops-header__title center" style="color:black; position:absolute; left:35vw; top:5vh;">SELECT ALGORITHM</span>
+				</header>
+
+			<section class="content" style="background-color:#18696c;">
+
+				<div class="grid grid--effect-vega">
+					
+					<a data-toggle="modal" data-target="#myModal2" class="modal-trigger grid__item grid__item--c1">
+						<div class="stack">
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__figure">
+								<img class="stack__img" src="img/1.png" alt="Image"/>
+							</div>
+						</div>
+						<div class="grid__item-caption">
+							<h3 class="grid__item-title">Sorting</h3>
+							<div class="column column--left">
+								<span class="column__text">Selection</span>
+								<span class="column__text">Bubble</span>
+								<span class="column__text">Quick</span>
+
+							</div>
+						</div>
+					</a>
+					<a  data-toggle="modal" data-target="#myModal1" class="modal-trigger grid__item grid__item--c2">
+						<div class="stack">
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__figure">
+								<img class="stack__img" src="img/2.png" alt="Image"/>
+							</div>
+						</div>
+						<div class="grid__item-caption">
+							<h3 class="grid__item-title">Tree</h3>
+							<div class="column column--left">
+								<span class="column__text">Insertion</span>
+								<span class="column__text">Deletion</span>
+								<span class="column__text">Traversal</span>
+							</div>
+							</div>
+					</a>
+
+
+
+
+					<a id="kuchhb"  href="graph.html" class="modal-trigger grid__item grid__item--c3">
+						<div class="stack">
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__figure">
+								<img class="stack__img" src="img/3.png" alt="Image"/>
+							</div>
+						</div>
+						<div class="grid__item-caption">
+							<h3 class="grid__item-title">Graph</h3>
+							<div class="column column--left">
+								<span class="column__text">BFS traversal</span>
+								<span class="column__text">DFS traversal</span>
+								<span class="column__text">Dijkstra's algorithm</span>
+							</div>
+							</div>
+					</a>
+				</div>
+			</section>
+
+			<hr style="align:center; width:90%;">
+
+			<section class="content" style="background-color:#18696c;">
+
+				<div class="grid grid--effect-vega">
+					<a href="stack.html" class="grid__item grid__item--c1">
+						<div class="stack">
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__figure">
+								<img class="stack__img" src="img/4.png" alt="Image"/>
+							</div>
+						</div>
+						<div class="grid__item-caption">
+							<h3 class="grid__item-title">Stack</h3>
+							<div class="column column--left">
+								<span class="column__text">Insertion</span>
+								<span class="column__text">Deletion</span>
+
+							</div>
+
+						</div>
+					</a>
+					<a href="queue.html" class="grid__item grid__item--c2">
+						<div class="stack">
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__figure">
+								<img class="stack__img" src="img/5.png" alt="Image"/>
+							</div>
+						</div>
+						<div class="grid__item-caption">
+							<h3 class="grid__item-title">Queue</h3>
+							<div class="column column--left">
+								<span class="column__text">Insertion</span>
+								<span class="column__text">Deletion</span>
+
+							</div>
+
+						</div>
+					</a>
+					<a href="list.html" class="grid__item grid__item--c3">
+						<div class="stack">
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__deco"></div>
+							<div class="stack__figure">
+								<img class="stack__img" src="img/6.png" alt="Image"/>
+							</div>
+						</div>
+						<div class="grid__item-caption">
+							<h3 class="grid__item-title">Linked list</h3>
+							<div class="column column--left">
+								<span class="column__text">Insertion</span>
+								<span class="column__text">Deletion</span>
+								<span class="column__text">+Binary search</span>
+							</div>
+						</div>
+					</a>
+				</div>
+			</section>
+
+
+
+		</main>
+		<script src="js/anime.min.js"></script>
+		<script src="js/main.js"></script>
+		<script>
+		(function() {
+			[].slice.call(document.querySelectorAll('.grid--effect-vega > .grid__item')).forEach(function(stackEl) {
+				new VegaFx(stackEl);
+			});
+
+		})();
+
+		$(document).ready(function(){
+
+            $(".button-collapse").sideNav();
+            // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+            //$('#modal1').modal();
+            $('#modal2').modal({
+            //$('#modal3').modal({
+                ready:function(modal,trigger){
+                    $(".button-collapse").sideNav('show');
+                }
+
+            });
+
+
+            //$('#modal4').modal({
+
+            //ready:function(modal,trigger){
+              //      $(".button-collapse").sideNav('show');
+                //}
+            //});
+
+
+
+
+
+          });
+
+
+        function trans(id)
+        {
+            var div_id=$("#"+id).data('id');
+
+            var final_id="div"+div_id;
+            var final_li="li"+div_id;
+
+            $(".scroll").slideUp();
+            $(".scroll2").removeClass('active');
+
+            setTimeout(function(){
+
+                $("#"+final_id).slideDown();
+                $("#"+final_li).addClass('active');
+            },400);
+
+
+
+
+
+        }
+
+
+		</script>
+	</body>
+</html>

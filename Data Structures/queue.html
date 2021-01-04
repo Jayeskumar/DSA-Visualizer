@@ -1,0 +1,270 @@
+<html>
+<head>
+<script src="js/svg.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+header {
+  text-align: center;
+  background: #06575d;
+  color: white;
+	
+  }
+
+header .container {
+	
+	font-family:Microsoft Sans Serif;	
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+hr.star-light {
+  border-color: white;
+}
+hr.star-light:after {
+  background-color: #18BC9C;
+  color: white;
+}
+
+body{
+background-color:white;
+margin:0px;
+}
+.container{
+
+}
+</style>
+
+
+</head>
+<body>
+
+<header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    <div class="intro-text">
+                        <h1 class="name">Queue</h1>
+                       </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+<form id="f" onsubmit="return fs();">
+<input type="text" id="num" autocomplete="off" class="form-control" style="display:inline-block; width:10em; margin-left:3em; margin-right:3em;">
+<button class="btn" type="button" value="Push" onclick="psh(document.getElementById('num').value)">Push</button>
+<button class="btn" type="button" value="Push random" onclick="psh_ran()">Push Random</button>
+<button class="btn" type="button" value="Pop" onclick="pop(document.getElementById('num').value)"> Pop</button>
+</form>
+<br>
+<div id="op"></div>
+<br><Br><br>
+<br><br>
+<div id="status"></div>
+<div class="graph"></div>
+<script type="text/javascript">
+// alert("(");
+
+function fs() {
+	psh(document.getElementById('num').value);
+	document.getElementById('num').focus();
+	document.getElementById('num').value = "";
+	return false;
+}
+
+var svg = new SVG(document.querySelector(".graph")).size("100%", "60%");
+
+var node = function(num) {
+	this.val = num;
+
+	this.x = 50;
+	this.y = 50
+
+	this.c = svg.circle(75).fill('#fff').stroke({'color' : '#699dd1', 'width' : 2});
+
+	var size = 20;
+	var px = 0;
+	var py = this.y-13;
+	if(parseInt(num) >= 10) {
+		px = 10;
+	}
+	if(parseInt(num) >= 100) {
+		px = 15;
+	}
+
+	this.txt = svg.text(num+"").fill('#000000').stroke({'color' : '#699dd1', 'width' : 0}).x(this.x - 5 - px).y(py).size(20);
+	this.c.attr('cx', this.x);
+	this.c.attr('cy', this.y);
+
+	this.g = svg.group();
+	this.g.add(this.c);
+	this.g.add(this.txt);
+
+	this.mv = function(nx, ny) {
+// 		alert("^&*");
+		this.x = nx;
+		this.y = ny;
+
+		this.c.animate(400).attr({'cx' : nx + 50, 'cy' : ny + 50});
+		this.txt.animate(400).attr({'x' : nx+45 - px, 'y' : ny+30});
+	}
+}
+
+var indicator = function() {
+// 	var pointer = svg.circle(20).fill("#699dd1");
+	var pointer = svg.circle(20).fill("#699dd1").stroke({'width' : 0, 'color' : '#699dd1'});
+
+	this.x = 50;
+	this.y = 170;
+
+	this.pointTo = function(index) {
+		this.x = parseInt(index)*80 + 50;
+		pointer.animate(400).attr({'cx' : this.x, 'cy' : this.y}).afterAll(function() { pop_lock = 0;});
+	}
+
+	this.sety = function(ny) {
+		this.y = ny;
+		pointer.animate(200).attr({'cy' : ny});
+	}
+
+	this.setColor = function(col) {
+		pointer.attr({'fill' : col});
+	}
+
+}
+
+var randIter = svg.circle(0);
+
+var queue = function(size) {
+// 	alert("Y");
+
+
+	this.head = 0;
+	this.tail = 0;
+
+	this.arr = [];
+
+	this.tailpointer = new indicator();
+	this.headpointer = new indicator();
+
+	this.headpointer.setColor("#d9534f");
+	this.headpointer.sety(140);
+
+	this.tailpointer.setColor("#5cb85c");
+
+	this.headpointer.pointTo(0);
+	this.tailpointer.pointTo(0);
+
+	var par = this;
+	var pushpar = null;
+
+	this.push = function(num) {
+// 		alert(this.tail);
+		if((this.tail == this.head) && this.arr[this.head] != null) {
+			alert("The queue is full ..!");
+		}
+		else {
+			push_lock = 1;
+			var n = new node(num);
+			this.arr[this.tail] = n;
+
+			n.mv(this.tail*80, 190);
+
+			var par = this;
+			randIter.animate(400).attr('x', 0).after(function(s) {
+				par.arr[par.tail].c.attr('stroke', '#fff');
+				par.tail = (par.tail + 1) % (size+1);
+				randIter.animate(1).attr('x', 0).after(function(s) {
+					par.tailpointer.pointTo(par.tail);
+					if(par.tail == par.head) {
+						par.headpointer.sety(140);
+					}
+					else {
+						par.headpointer.sety(170);
+					}
+					push_lock = 0;
+				});
+			});
+		}
+	}
+
+	this.pop = function() {
+		pop_lock = 1;
+
+		if(this.head == (this.tail) && this.arr[this.head] == null) {
+			alert("The queue is empty");
+			pop_lock = 0;
+		}
+		else {
+			this.arr[this.head].mv(this.arr[this.head].x, 2000);
+	// 		alert("prle popping");
+			this.arr[this.head] = null;
+			this.head = (this.head + 1) % (size + 1);
+			var par = this;
+			randIter.animate(100).attr('x', 0).after(function(s) {
+					par.headpointer.pointTo(par.head);
+					if(par.tail == par.head) {
+							par.headpointer.sety(140);
+					}
+					else {
+						par.headpointer.sety(170);
+					}
+					randIter.animate(400).attr('x', 0).after(function(s) {
+						pop_lock = 0;
+					});
+			});
+		}
+	}
+
+	this.p = function() {
+		var i;
+		var rx = 10;
+			var ry = 200;
+		for(i=0; i<=size; i++) {
+// 			alert("(");
+			var r = svg.rect(80,80).fill('#fff').stroke({'color' : '#699dd1', 'width' : 2}).attr({'x' : rx, 'y': ry});
+			var t = svg.text(i+"").fill('#699dd1').stroke({'color' : '#699dd1', 'width' : 0}).attr({'x' : rx+30, 'y': ry+80}).size(20);
+			rx = rx + 80;
+		}
+
+		var lh = svg.circle(20).fill('#5cb85c').x(800).y(41);
+		var lt = svg.circle(20).fill('#d9534f').x(800).y(10);
+
+		var lht = svg.text("head").fill('#000').x(830).y(12);
+		var ltt = svg.text("tail").fill('#000').x(830).y(41);
+
+	}
+
+}
+
+var push_lock = 0;
+var pop_lock = 0;
+
+var q = new queue(12);
+q.p();
+
+function psh(num) {
+	if(push_lock == 0) {
+		q.push(num);
+	}
+}
+
+function psh_ran(num) {
+	if(push_lock == 0) {
+		q.push(Math.floor(Math.random() * 99));
+	}
+}
+
+function pop() {
+	if(pop_lock == 0) {
+		q.pop();
+	}
+}
+
+</script>
+</body>
+</html>

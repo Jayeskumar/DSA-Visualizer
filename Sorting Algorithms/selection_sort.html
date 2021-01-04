@@ -1,0 +1,575 @@
+<html>
+<head>
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+<script src="js/bootstrap.js"></script>
+
+
+<link rel="stylesheet" href="js/jquery-ui.css">
+
+
+<!--<script src="js/jquery.animate-colors.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+-->
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+
+    <style>
+header {
+  text-align: center;
+  background: #06575d;
+  color: white;
+	
+  }
+
+header .container2 {
+	
+	font-family:Microsoft Sans Serif;	
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+hr.star-light {
+  border-color: white;
+}
+hr.star-light:after {
+  background-color: #18BC9C;
+  color: white;
+}
+
+body{
+background-color:white;
+margin:0px;
+}
+.container{
+
+
+	position:relative;
+}
+
+
+        #inputNum {
+
+          position: absolute;
+          top: 2em;
+          left: 40%;
+          width: 10%;
+
+        }
+
+
+        #inputSub{
+            position: absolute;
+            top:2em;
+            left: 51%;
+        }
+
+        #start{
+          position: absolute;
+          top:2em;
+          left: 57%;
+
+        }
+
+
+
+        .block{
+          position: absolute;;
+            display: none;
+            width: 10%;
+            left:40%;
+            top:3em;
+            text-align:center;
+            background-color: white;
+            line-height: 2.5em;
+            border:1.5px solid grey;
+            border-radius: 0.3em;
+
+          }
+
+
+                  .pointer{
+                    position: absolute;;
+
+                      width: 5em;
+                      left:-15em;
+                      top:20em;
+                      text-align:center;
+                      background-color: white;
+                      line-height: 2.5em;
+                      border:1.5px solid grey;
+                      border-radius: 0.3em;
+
+                    }
+                  .min{
+                    position: absolute;;
+
+                      width: 5em;
+                      left:-15em;
+                      top:23em;
+                      text-align:center;
+                      background-color: white;
+                      line-height: 2.5em;
+                      border:1.5px solid grey;
+                      border-radius: 0.3em;
+
+                    }
+
+          .block:hover{
+            cursor: pointer;
+          }
+
+    </style>
+</head>
+<body>
+
+
+<header>
+        <div class="container2" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    <div class="intro-text">
+                        <h1 class="name">Selection Sort</h1>
+                       </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+    <div id="syncFnHolder"></div>
+   <div class="container">
+
+
+        <input type="text" id="inputNum" class="form-control" placeholder="Enter data" required autofocus>
+        <button type="button" class="btn btn-primary" id="inputSub">Insert</button>
+        <button type="button" class="btn btn-primary" style="display:none;" id="start"> Start</button>
+
+        <div class="pointer">pointer</div>
+
+        <div class="min">Min</div>
+
+
+      <div class="block" id="interface" data-toggle="tooltip" title="remove">
+
+      </div>
+    </div>
+<script>
+        var myf = [];
+        var i = 0;
+          var selector = "#syncFnHolder";
+//***********************
+$array = {};
+$arrayleft = {};
+
+var indexQ = [];
+var index2Q = [];
+
+
+$leftTrack=3;
+$count=0;
+$last=0;
+$delay=0;
+var top_ = -1;
+var runTop = -1;
+var SemaOne=0;
+var SemaTwo=0;
+var $temp2 = {};
+//**********************
+
+
+var Highlight = function($select,flag)
+{
+
+    $("#block_"+$select).delay($delay).animate({backgroundColor: "rgb(150,150,255)"},300).delay(300).animate({backgroundColor: "rgb(255,255,255)"},300,mainAnime);
+
+}
+
+var swapHigh = function($select)
+{
+  $(".pointer").animate({backgroundColor: "rgb(165, 255, 151)"},300);
+
+}
+
+
+
+var anime_i=1,anime_j=1 ,swap_flag=0;
+var $min,$minSelect;
+
+var isfirst=true;
+
+function mainAnime()
+{
+      if(isfirst==true)
+      {
+        isfirst=false;
+          $min=$temp2[anime_i].value;
+          $minSelect=anime_i;
+
+          $(".pointer").animate({'left':$arrayleft[anime_i]+'em'},300);
+          $(".min").animate({'left':$arrayleft[anime_i]+'em'},300);
+          //$(".pointer").animate({'left':$temp2[anime_i].left+'em'},300);
+
+          ////>>>>>>>>>>highligh anime_i;
+      }
+
+      anime_j++;
+
+      while(jQuery.isEmptyObject($temp2[anime_j]) && anime_j<$last)
+      {
+          anime_j++;
+      }
+
+      if(anime_j > $last)
+      {
+
+
+          anime_i++;
+          while(jQuery.isEmptyObject($temp2[anime_i]) && anime_i<$last)
+          {
+              anime_i++;
+          }
+
+          if(anime_i>$last)
+          {
+              return;
+          }
+
+
+
+          runTop++;
+
+          if(runTop<=top_)
+          {
+              swap_flag=1;
+          //anime(indexQ[runTop],index2Q[runTop]);
+          }
+
+          anime_j=anime_i;
+          //mainAnime();
+          //return;
+      }
+    //  alert("  I  :" + anime_i +"  J " + anime_j);
+      if(swap_flag==1)
+      {
+
+        swap_flag=0;
+
+        $min=$temp2[anime_j].value;
+        $minSelect=anime_j;
+    //    alert(indexQ[runTop]+"  "+index2Q[runTop]);
+          anime(indexQ[runTop],index2Q[runTop]);
+      }
+      else {
+
+
+        if($min>$temp2[anime_j].value)
+        {
+            $min=$temp2[anime_j].value;
+
+
+            //$("#block_"+$temp2[$minSelect].key).delay(600).animate({backgroundColor: "rgb(255, 255, 255)"},300);
+
+
+            $minSelect=anime_j;
+
+            $(".min").animate({'left':$arrayleft[$minSelect]+'em'},300).animate({'top':'20em'},100);
+            //$("#block_"+$temp2[$minSelect].key).delay(300).animate({backgroundColor: "rgb(248, 255, 142)"},300,mainAnime);
+
+        }
+
+
+
+          Highlight($temp2[anime_j].key);
+
+
+
+
+
+
+
+
+      }
+
+
+}
+
+function syncOne()
+{
+    semaOne=1;
+
+
+    if(semaTwo == 1)
+    {
+      $min=$temp2[anime_i].value;
+      $minSelect=anime_i;
+
+            $(".min").animate({'top':'23em'},100).animate({'left':$arrayleft[anime_i]+'em'},300);
+            $(".pointer").animate({'left':$arrayleft[anime_i]+'em'},300,mainAnime);
+
+    }
+    else {
+      return;
+    }
+}
+
+function syncTwo()
+{
+  semaTwo=1;
+
+  if(semaOne == 1)
+  {
+    $min=$temp2[anime_i].value;
+    $minSelect=anime_i;
+
+    $(".min").animate({'top':'23em'},100).animate({'left':$arrayleft[anime_i]+'em'},300);
+      $(".pointer").animate({'left':$arrayleft[anime_i]+'em'},300,mainAnime);
+
+
+  }
+  else {
+    return;
+  }
+}
+
+
+        var anime = function($block_a_num,$block_b_num)
+        {
+
+        //  alert($block_a_num + " : " + $block_b_num);
+            semaOne = 0;
+            semaTwo = 0;
+            if($block_a_num==$block_b_num)
+            {
+              $min=$temp2[anime_i].value;
+              $minSelect=anime_i;
+
+              //$("#block_"+$temp2[$block_a_num].key).delay($delay).animate({backgroundColor: "rgb(255, 255, 255)"},300);
+
+$(".min").animate({'top':'23em'},100).animate({'left':$arrayleft[anime_i]+'em'},300);
+$(".pointer").animate({'left':$arrayleft[anime_i]+'em'},300,mainAnime);
+
+                return;
+
+            }
+
+
+        //    alert("in anime " + $arrayleft[$block_a_num] + " : " + $arrayleft[$block_b_num]);
+
+        $("#block_"+$temp2[$block_a_num].key).delay($delay).animate({"top":"-=20px"}, 300);
+        $("#block_"+$temp2[$block_b_num].key).delay($delay).animate({"top":"-=20px"}, 300);
+
+        $("#block_"+$temp2[$block_a_num].key).delay($delay).animate({left : $arrayleft[$block_b_num] + "em"},500);
+        $("#block_"+$temp2[$block_b_num].key).delay($delay).animate({left : $arrayleft[$block_a_num] + "em"},500);
+
+        //$("#block_"+$temp2[$block_a_num].key).delay($delay).animate({backgroundColor: "rgb(255, 255, 255)"},300);
+        //$("#block_"+$temp2[$block_b_num].key).delay($delay).animate({backgroundColor: "rgb(255, 255, 255)"},300);
+
+
+        $("#block_"+$temp2[$block_a_num].key).delay($delay).animate({"top":"+=20px"}, 300,syncOne);
+        $("#block_"+$temp2[$block_b_num].key).delay($delay).animate({"top":"+=20px"}, 300,syncTwo);
+
+        //$temp=$arrayleft[$block_a_num];
+        //$arrayleft[$block_a_num]=$arrayleft[$block_b_num];
+        //$arrayleft[$block_b_num]=$temp;
+
+
+        //alert($str);
+
+        $temp10=$temp2[$block_a_num];
+        $temp2[$block_a_num]=$temp2[$block_b_num];
+        $temp2[$block_b_num]=$temp10;
+      }
+
+
+    var swap = function($block_a_num,$block_b_num)
+    {
+      //$('div').clearQueue();
+
+
+      //alert($block_a_num + " : " + $block_b_num);
+
+
+
+        top_++;
+        indexQ[top_]=$block_a_num;
+        index2Q[top_]=$block_b_num;
+
+
+        //alert("one : " + $block_a_num+ "  two :"+ $block_b_num);
+
+
+  //      alert("one :" + ($delay-$array[$block_a_num].delay) + " sec :"+ ($delay-$array[$block_b_num].delay));
+
+        //$array[$block_a_num].delay+=1000;
+        //$array[$block_b_num].delay+=1000;
+
+
+
+    }
+
+
+    $("#inputSub").click(function()
+    {
+    //alert("heyhey");
+        newEle();
+    });
+
+    $.fn.pressEnter = function(fn) {
+
+    return this.each(function() {
+        $(this).bind('enterPress', fn);
+        $(this).keyup(function(e){
+            if(e.keyCode == 13)
+            {
+              $(this).trigger("enterPress");
+            }
+        })
+    });
+ };
+
+ $("#inputNum").pressEnter(function(){
+   newEle();
+
+ });
+
+    var newEle = function(){
+
+      $value = $("#inputNum").val();
+      if($value=="")
+      {
+
+      }
+      else {
+
+
+        if($count<=10)
+        {
+			$value=parseInt($value);
+          $count++;
+          $last++;
+            $newDiv = $("#interface").clone();
+            $newDiv.css("display","block");
+            $newDiv.attr('id','block_'+ $last);
+            $newDiv.data("number",{count : $last , number : $value});
+            $newDiv.html($value);
+            $(".container").append($newDiv);
+            $newDiv.animate({'top':'15em','width':'5em','left': $leftTrack + 'em'},500,function(){$("body").tooltip();});
+
+            $array[$last]={value:$value,left:$leftTrack,key:$last,delay:0};
+            $arrayleft[$last]=$leftTrack;
+            $leftTrack += 8;
+
+
+            $("#inputNum").val("");
+            $("#inputNum").focus();
+
+            if($count==1)
+            {
+                $("#start").fadeIn(2000);
+            }
+
+        }
+    }
+
+    }
+
+
+    $(".container").on('click','#start',function(){
+
+      $.each($array,function(index,obj){
+        $temp2[obj.key] = obj;
+        //alert("key : "+ obj.key + " value : " + obj.value + " left : " + obj.left);
+      });
+
+
+$delay=0;
+
+/*$.each($temp2,function(index,obj){
+
+//  alert("key : "+ obj.key + " value : " + obj.value + " left : " + obj.left);
+});
+*/
+
+
+
+        $.each($array,function($index,$obj)
+        {
+            $min= $obj.value;
+            $minBlock=$index;
+
+            $.each($array,function($in2,$obj2)
+            {
+          //      alert($obj2.value);
+                if(parseInt($in2) <= parseInt($index))
+                {
+            //        alert("in if :: should not be  : " + $in2 + " less than : " + $index);
+                    return true;
+                }
+
+          //      alert($minBlock);
+
+
+              //  alert("index 2 :  :  " + $in2);
+
+                if($min > $obj2.value)
+                {
+                      $min=$obj2.value;
+                      $minBlock=$in2;
+                }
+            });
+            $str = "";
+
+            //alert($min + " : " + $minBlock);
+            //swap($index,$minBlock);
+            //alert("swaping :" + $obj.value+ " and "+ $min);
+            //$delay+=2000;
+
+//add three functions to a queue
+
+  //alert(")");
+  //alert(i);
+
+//alert($index + "  "  + $minBlock);
+  swap($index,$minBlock);
+
+      //    alert($array[$index].value + " : before :" + $array[$minBlock].value);
+
+            $temp=$array[$index];
+            $array[$index]=$array[$minBlock];
+            $array[$minBlock]=$temp;
+      //    alert($array[$index].value + " : after :" + $array[$minBlock].value);
+            $.each($array, function(index,obj) {
+                $str += obj.value + " ";
+            });
+        //    alert($str);
+
+        });
+
+
+
+/*
+$.each($array,function(index,obj){
+
+  alert("key : "+ obj.key + " value : " + obj.value + " left : " + obj.left);
+});
+*/
+$.each($temp2,function(index,obj){
+
+  //alert("key : "+ obj.key + " value : " + obj.value + " left : " + obj.left);
+});
+
+//$array = $temp2;
+
+
+        //alert(runTop);
+        //alert(indexQ[runTop] + "  : " +  index2Q[runTop]);
+        //top--;
+        mainAnime();
+
+
+});
+</script>

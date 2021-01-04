@@ -1,0 +1,493 @@
+<html>
+<head>
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+
+
+<link rel="stylesheet" href="js/jquery-ui.css">
+
+
+<!--<script src="js/jquery.animate-colors.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+-->
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/bootstrap.js"></script>
+
+    <style>
+
+    header {
+      text-align: center;
+      background: #06575d;
+      color: white;
+
+      }
+
+    header .container {
+
+    	font-family:Microsoft Sans Serif;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    hr.star-light {
+      border-color: white;
+    }
+    hr.star-light:after {
+      background-color: #18BC9C;
+      color: white;
+    }
+
+    body{
+    background-color:white;
+    margin:0px;
+    }
+    .container{
+
+    }
+
+        #inputNum {
+
+          position: absolute;
+          top: 2em;
+          left: 40%;
+          width: 10%;
+
+        }
+
+
+        #inputSub{
+            position: absolute;
+            top:2em;
+            left: 51%;
+        }
+
+        #start{
+          position: absolute;
+          top:2em;
+          left: 57%;
+
+        }
+
+
+                #next{
+                  position: absolute;
+                  top:2em;
+                  left: 64%;
+
+                }
+
+
+
+        .block{
+          position: absolute;;
+            display: none;
+            width: 10%;
+            left:40%;
+            top:3em;
+            text-align:center;
+            background-color: white;
+            line-height: 2.5em;
+            border:1.5px solid grey;
+            border-radius: 0.3em;
+
+          }
+
+
+                  .pointer{
+                    position: absolute;;
+
+                      width: 5em;
+                      left:-10em;
+                      top:20em;
+                      text-align:center;
+                      background-color: white;
+                      line-height: 2.5em;
+                      border:1.5px solid grey;
+                      border-radius: 0.3em;
+
+                    }
+                  .min{
+                    position: absolute;;
+
+                      width: 5em;
+                      left:-10em;
+                      top:23em;
+                      text-align:center;
+                      background-color: white;
+                      line-height: 2.5em;
+                      border:1.5px solid grey;
+                      border-radius: 0.3em;
+
+                    }
+
+          .block:hover{
+            cursor: pointer;
+          }
+
+    </style>
+</head>
+<body>
+
+    <header>
+            <div class="container2" id="maincontent" tabindex="-1" style="padding-top:1em; padding-bottom:1em;">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <div class="intro-text">
+                            <h1 class="name">Insertion Sort</h1>
+                           </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+    <div id="syncFnHolder"></div>
+   <div class="container" style="position:relative;">
+
+
+            <div id="instr" class="jumbotron" style="position:absolute; left:75%; top:3em;">
+
+
+            </div>
+
+
+        <input type="text" id="inputNum" class="form-control" placeholder="Enter data" required autofocus>
+        <button type="button" class="btn btn-primary" id="inputSub">Insert</button>
+        <button type="button" class="btn btn-primary" style="display:none;" id="start"> Start</button>
+        <button type="button" class="btn btn-primary" style="display:none;" id="next"> Next</button>
+        <div class="pointer">pointer</div>
+
+        <div class="min">Pointer</div>
+
+
+      <div class="block" id="interface">
+
+      </div>
+    </div>
+<script>
+        var myf = [];
+        var i = 0;
+          var selector = "#syncFnHolder";
+//***********************
+$array = {};
+$arrayleft = {};
+
+var indexQ = [];
+var index2Q = [];
+
+iscomplete=false;
+$leftTrack=3;
+$count=0;
+$last=0;
+$delay=0;
+var top_ = -1;
+var runTop = -1;
+var SemaOne=0;
+var SemaTwo=0;
+$temp=null;
+//**********************
+
+
+
+
+
+//var $min,$minSelect;
+var pointer=1,position=0 ,isnext=true;
+
+var isfirst=true;
+
+
+var controller = function(ischained)
+{
+
+            if($array[position].value>$array[position+1].value)
+            {
+                document.querySelector("#instr").innerHTML+="<br> true : swap";
+
+                isnext=false;
+                anime(position,position+1,ischained);
+            }
+            else {
+                isnext=true;
+                if(ischained)
+                {
+                    mainAnime(ischained);
+                }
+            }
+
+}
+
+function mainAnime(ischained)
+{
+
+
+
+  if(isfirst==true)
+  {
+      isfirst=false;
+
+
+
+      $(".pointer").animate({'left':$arrayleft[pointer]+'em'},300);
+      $(".min").animate({'left':$arrayleft[pointer]+'em'},300);
+
+
+  }
+
+      if(isnext)
+      {
+          pointer++;
+
+
+          if(pointer>$last)
+          {
+            $("#inputSub").removeClass('disabled');
+            $("#next").removeClass('disabled');
+
+            $(".min").animate({'top':'23em'}).animate({'left':'-10em'},300);
+            $(".pointer").animate({'top':'23em'}).animate({'left':'-10em'},300);
+              return;
+          }
+          $(".pointer").animate({'left':$arrayleft[pointer]+'em'},300);
+
+
+          position=pointer;
+          isnext=false;
+          document.querySelector("#instr").innerHTML="pointer:"+pointer + " position:" + position;
+          if(ischained)
+          {
+              $(".min").animate({'top':'23em'}).animate({'left':$arrayleft[pointer]+'em'},300,function(){mainAnime(ischained)});
+          }
+          else {
+              $(".min").animate({'top':'23em'}).animate({'left':$arrayleft[pointer]+'em'},300);
+          }
+
+
+
+      }
+      else {
+
+          position--;
+          document.querySelector("#instr").innerHTML="pointer:"+pointer + " position:" + position;
+          //alert("position--  =>" + position);
+          if(position<=0)
+          {
+              isnext=true;
+              mainAnime(ischained);
+              return;
+          }
+
+          $(".min").animate({'left':$arrayleft[position]+'em'},300).animate({'top':'20em'},function(){
+
+
+                        document.querySelector("#instr").innerHTML="pointer:"+pointer + " position:" + position;
+
+
+                        document.querySelector("#instr").innerHTML+="<br>swap if ( " + $array[position].value +" > " + $array[position+1].value + " )";
+
+            $("#block_"+$array[position].key).animate({backgroundColor: "rgb(150,150,255)"},300).delay(300).animate({backgroundColor: "rgb(255,255,255)"},300);
+            $("#block_"+$array[position+1].key).animate({backgroundColor: "rgb(150,150,255)"},300).delay(300).animate({backgroundColor: "rgb(255,255,255)"},300,function(){
+
+
+
+              controller(ischained);});
+            });
+
+
+
+      }
+
+
+
+}
+
+function syncOne()
+{
+    semaOne=1;
+
+
+    if(semaTwo == 1)
+    {
+          mainAnime(true);
+    }
+    else {
+      return;
+    }
+}
+
+function syncTwo()
+{
+  semaTwo=1;
+
+  if(semaOne == 1)
+  {
+        mainAnime(true);
+  }
+  else {
+    return;
+  }
+}
+
+
+        var anime = function($block_a_num,$block_b_num,ischained)
+        {
+              //swap
+            semaOne = 0;
+            semaTwo = 0;
+            if($block_a_num==$block_b_num)
+            {
+
+                mainAnime(ischained);
+                alert("error");
+                return;
+
+            }
+
+
+
+        $("#block_"+$array[$block_a_num].key).delay($delay).animate({"top":"-=20px"}, 300);
+        $("#block_"+$array[$block_b_num].key).delay($delay).animate({"top":"-=20px"}, 300);
+
+        $("#block_"+$array[$block_a_num].key).delay($delay).animate({left : $arrayleft[$block_b_num] + "em"},500);
+        $("#block_"+$array[$block_b_num].key).delay($delay).animate({left : $arrayleft[$block_a_num] + "em"},500);
+
+        //alert(ischained);
+
+        if(ischained)
+        {
+            //alert("swap");
+        $("#block_"+$array[$block_a_num].key).delay($delay).animate({"top":"+=20px"}, 300,syncOne);
+        $("#block_"+$array[$block_b_num].key).delay($delay).animate({"top":"+=20px"}, 300,syncTwo);
+
+        }
+        else {
+          $("#block_"+$array[$block_a_num].key).delay($delay).animate({"top":"+=20px"}, 300);
+          $("#block_"+$array[$block_b_num].key).delay($delay).animate({"top":"+=20px"}, 300);
+
+        }
+        $temp10=$array[$block_a_num];
+        $array[$block_a_num]=$array[$block_b_num];
+        $array[$block_b_num]=$temp10;
+      }
+
+
+
+
+    $("#inputSub").click(function()
+    {
+
+        newEle();
+    });
+
+    $.fn.pressEnter = function(fn) {
+
+    return this.each(function() {
+        $(this).bind('enterPress', fn);
+        $(this).keyup(function(e){
+            if(e.keyCode == 13)
+            {
+              $(this).trigger("enterPress");
+            }
+        })
+    });
+ };
+
+ $("#inputNum").pressEnter(function(){
+   newEle();
+
+ });
+
+    var newEle = function(){
+
+      $value = $("#inputNum").val();
+      if($value=="")
+      {
+
+      }
+      else {
+
+
+
+
+        if($count<=10)
+        {
+            if($temp!=null)
+            {
+
+              $.each($temp,function($in2,obj)
+              {
+                  $("#block_"+obj.key).animate({backgroundColor: "rgb(255,255,255)"},300);
+              });
+                $array=$temp;
+                $temp=null;
+            }
+
+
+          $count++;
+          $last++;
+            $newDiv = $("#interface").clone();
+            $newDiv.css("display","block");
+            $newDiv.attr('id','block_'+ $last);
+            $newDiv.data("number",{count : $last , number : $value});
+            $newDiv.html($value);
+            $(".container").append($newDiv);
+            $newDiv.animate({'top':'15em','width':'5em','left': $leftTrack + 'em'},500);
+
+            $array[$last]={value:$value,left:$leftTrack,key:$last,delay:0};
+            $arrayleft[$last]=$leftTrack;
+            $leftTrack += 8;
+
+            $("#inputNum").val("");
+            $("#inputNum").focus();
+
+            if($count==1)
+            {
+                $("#start").fadeIn(2000);
+                $("#next").fadeIn(2000);
+            }
+
+        }
+    }
+
+    }
+
+
+    $(".container").on('click','#start',function(){
+
+$("#inputSub").addClass('disabled');
+$("#next").addClass('disabled');
+  if($temp==null)
+  {
+      $temp=$array;
+  }
+
+
+  mainAnime(true);
+
+
+});
+
+
+$(".container").on('click','#next',function(){
+
+$("#inputSub").addClass('disabled');
+
+if($temp==null)
+{
+  if(isfirst)
+  {
+  $temp=$array;
+  }
+}
+
+
+mainAnime(false);
+
+
+});
+
+</script>
+</body>
+</html>

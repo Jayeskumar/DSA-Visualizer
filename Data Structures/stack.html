@@ -1,0 +1,229 @@
+<html>
+<head>
+<script src="js/svg.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<style>
+header {
+  text-align: center;
+  background: #06575d;
+  color: white;
+	
+  }
+
+header .container {
+	
+	font-family:Microsoft Sans Serif;	
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+hr.star-light {
+  border-color: white;
+}
+hr.star-light:after {
+  background-color: #18BC9C;
+  color: white;
+}
+
+body{
+background-color:white;
+margin:0px;
+}
+.container{
+
+}
+</style>
+	
+
+
+</head>
+<body>
+
+<header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    <div class="intro-text">
+                        <h1 class="name">Stack</h1>
+                       </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+
+<div style="margin-top:1em">
+<form id="f" onsubmit="return fs();">
+<input type="text" id="num" autocomplete="off" class="form-control" style="display:inline-block; width:10em; margin-left:3em; margin-right:3em;">
+<input type="button" class="btn" value="Push" onclick="psh(document.getElementById('num').value)">
+<input type="button" class="btn" value="Push random" onclick="psh_ran()">
+<input type="button" class="btn" value="Pop" onclick="pop(document.getElementById('num').value)">
+</form>
+</div>
+<br>
+<div id="op"></div>
+<br><Br><br>
+<br><br>
+<div id="status"></div>
+<div class="graph"></div>
+<script type="text/javascript">
+// alert("(");
+
+function fs() {
+	psh(document.getElementById('num').value);
+	document.getElementById('num').focus();
+	document.getElementById('num').value = "";
+	return false;
+}
+
+var svg = new SVG(document.querySelector(".graph")).size("100%", "60%");
+
+var node = function(num) {
+	this.val = num;
+	
+	this.x = 50;
+	this.y = 50
+	
+	this.c = svg.circle(75).fill('#fff').stroke({'color' : '#699dd1', 'width' : 2});
+	
+	var size = 20;
+	var px = 0;
+	var py = this.y-13;
+	if(parseInt(num) >= 10) {
+		px = 10;
+	}
+	if(parseInt(num) >= 100) {
+		px = 15;
+	}
+	
+	this.txt = svg.text(num+"").fill('#000').stroke({'color' : '#699dd1', 'width' : 0}).x(this.x - 5 - px).y(py).size(20);
+	this.c.attr('cx', this.x);
+	this.c.attr('cy', this.y);
+	
+	this.g = svg.group();
+	this.g.add(this.c);
+	this.g.add(this.txt);
+	
+	this.mv = function(nx, ny) {
+// 		alert("^&*");
+		this.x = nx;
+		this.y = ny;
+
+		this.c.animate(400).attr({'cx' : nx + 50, 'cy' : ny + 50});
+		this.txt.animate(400).attr({'x' : nx+45 - px, 'y' : ny+35});
+	}
+}
+
+var indicator = function() {
+// 	var pointer = svg.circle(20).fill("#699dd1");
+	var pointer = svg.text("TOP").fill("#699dd1").stroke({'width' : 1, 'color' : '#699dd1'});
+	
+	this.x = 0;
+	this.y = 0;
+	
+	this.pointTo = function(index) {
+		this.x = parseInt(index)*80 + 34;
+		this.y = 170;
+		pointer.animate(400).attr({'x' : this.x, 'y' : this.y}).afterAll(function() { pop_lock = 0;});
+	}
+}
+
+var randIter = svg.circle(0);
+
+var stk = function(size) {
+// 	alert("Y");
+	
+
+	this.top = -1;
+	this.arr = [];
+	
+	this.indi = new indicator();
+	this.indi.pointTo(0);
+	var par = this;
+	var pushpar = null;
+	
+	this.push = function(num) {
+		push_lock = 1;
+		if(par.top == size) {
+			alert("Stack is full ..!");
+		}
+		else {
+			this.n = new node(num);
+			par.top += 1;
+			par.arr[par.top] = this.n;
+			
+			pushpar = this;
+			randIter.animate(100).attr('cx', 0).after(function() {
+				par.indi.pointTo(par.top+1);	
+				randIter.animate(400).attr('cx', 0).after(function() {
+					pushpar.n.mv((par.top+1)*80, 190);
+					randIter.animate(400).attr('cx', 0).afterAll(function() {
+						pushpar.n.c.stroke({'width': 0});
+						push_lock = 0;
+					});
+				});	
+			});	
+		}
+	}
+	
+	this.pop = function() {
+		pop_lock = 1;
+		if(par.top == -1) {
+			alert("Stack is empty,..!");
+			pop_lock = 0;
+		}
+		else {
+			par.arr[par.top].mv(par.arr[par.top].x,2000);
+			par.arr[par.top] = null;
+			par.top -= 1;
+			par.indi.pointTo(par.top+1);
+		}
+	}
+	
+	this.p = function() {
+		var i;
+		var rx = 10;
+		var ry = 200;
+		var r = svg.rect(80,80).fill('#fff').stroke({'color' : '#699dd1', 'width' : 0}).attr({'x' : rx, 'y': ry});
+		var t = svg.text("-1").fill('#699dd1').stroke({'color' : '#699dd1', 'width' : 0}).attr({'x' : rx+30, 'y': ry+80}).size(20);
+		rx = rx + 80;
+		for(i=0; i<=size; i++) {
+// 			alert("(");
+			var r = svg.rect(80,80).fill('#fff').stroke({'color' : '#699dd1', 'width' : 2}).attr({'x' : rx, 'y': ry});
+			var t = svg.text(i+"").fill('#699dd1').stroke({'color' : '#699dd1', 'width' : 0}).attr({'x' : rx+30, 'y': ry+80}).size(20);
+			rx = rx + 80;
+		}
+	}
+	
+}
+
+var push_lock = 0;
+var pop_lock = 0;
+
+var st = new stk(13);
+st.p();
+
+function psh(num) {
+	if(push_lock == 0) {
+		st.push(num);
+	}
+}
+
+function psh_ran(num) {
+	if(push_lock == 0) {
+		st.push(Math.floor(Math.random() * 10));
+	}
+}
+
+function pop() {
+	if(pop_lock == 0) {
+		st.pop();
+	}
+}
+
+</script>
+</body>
+</html>

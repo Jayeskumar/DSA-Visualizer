@@ -1,0 +1,527 @@
+<!Doctype HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css" >
+
+<script src="js/svg.js"></script>
+<script src="js/dijkstra.js"></script>
+<script src="js/svg.draggable.js"></script>
+<script src="js/jquery.min.js"></script>
+
+
+<style>
+header {
+  text-align: center;
+  background: #06575d;
+  color: white;
+
+  }
+
+header .container {
+
+	font-family:Microsoft Sans Serif;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+hr.star-light {
+  border-color: white;
+}
+hr.star-light:after {
+  background-color: #18BC9C;
+  color: white;
+}
+
+body{
+background-color:white;
+margin:0px;
+}
+.container{
+
+}
+</style>
+
+</head>
+<body>
+
+
+<header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="intro-text">
+                        <h1 class="name">Dijkstra's Algorithm</h1>
+                       </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+<div id="hider" style="position:absolute; margin-top:1em;">
+  <input type="text" id="num" class="form-control" style="display:inline-block; width:10em; margin-left:3em; margin-right:3em;">
+  <input type="button" id="btn" class="btn" value="number of nodes" onclick="init(document.getElementById('num').value)">
+</div>
+<div style="position:relative;">
+<input type="button" class="btn" id="start" style="position:absolute; left:50%; top:10px;" value="find shortest path" onclick="start(true)"/>
+<input type="button" class="btn" id="next" style="position:absolute; left:62%; top:10px;" value="next" onclick="caller()"/>
+</div>
+  <div id="show" style="position:fixed;">
+
+  </div>
+
+  <div id="instr" class="jumbotron" style="position:fixed; left:75%; padding:1em;">
+  </div>
+
+  <div class="graph"></div>
+<script type="text/javascript">
+
+
+document.querySelector("#instr").innerHTML="Enter Number of nodes";
+
+svgblock=document.querySelector(".graph");
+
+
+
+var svg = new SVG(document.querySelector(".graph")).size("100%", 1000);
+
+var temp;
+var that=null;
+var target=null;
+var nodes= [];
+var lock=false;
+
+
+var tempone={num:0};
+var temptwo=null;
+
+
+function node(num,x,y) {
+
+
+
+  this.x=x;
+  this.y=y;
+
+  this.lines = {};
+
+  this.oldx=this.x;
+  this.oldy=this.y;
+
+  this.num=num;
+
+  this.lock=false;
+
+  this.g = svg.group();
+
+  this.s= svg.circle(80).x(0).y(0).fill("#fff");
+  this.c = svg.circle(40).x(20).y(20).fill("#fff").stroke("#99f");
+
+  this.g.add(this.s);
+  this.g.add(this.c);
+
+  this.g.add(svg.text(this.num+"").x(34).y(30).fill("#000").stroke("#000000").size(17));
+
+    this.g.x(this.x).y(this.y);
+//l = svg.line(0, 0, 400, 400).stroke({ width: 3, color: '#629dd1'});
+
+  this.g.draggable().on('dragmove', function(e){
+
+      //<<<<<<<<<<<<<<<<<FUNCTION here
+
+if(target!=null)
+{
+target.x=target.g.x();
+target.y=target.g.y();
+
+getlines(target);
+}
+else {
+  that.x=that.g.x();
+  that.y=that.g.y();
+
+getlines(that);
+}
+
+
+  });
+
+
+
+this.g.on('beforedrag', function(e){
+
+        if(that==null)
+        {
+            that=this;
+            nodes.forEach(function(node){
+            if(node.g==that)
+              {
+                    that=node;
+              }
+            });
+
+            that.oldx=that.x;
+            that.oldy=that.y;
+
+        }
+        else {
+          //alert("bitvh");
+            if(this!=that)
+                {
+                        target=this;
+                        nodes.forEach(function(node){
+                        if(node.g==target)
+                          {
+                                target=node;
+                          }
+                        });
+
+                        target.oldx=target.x;
+                        target.oldy=target.y;
+                }
+
+        }
+
+
+});
+/*
+  this.g.on('mouseover',function(e)
+  {
+      svgblock.style.cursor='pointer';
+  });
+
+  this.g.on('mouseout',function(e)
+  {
+    if(that==null)
+    {
+      svgblock.style.cursor='auto';
+    }
+  });
+*/
+
+//var tempone=null;
+//var temptwo=null;
+
+  this.g.on('dragend',function(e){
+    that.x=that.g.x();
+    that.y=that.g.y();
+    //alert("oldx " + that.oldx + " current x :" + that.x) ;
+    if(that.oldx > (that.x+5) || that.oldx < (that.x-5) || that.oldy > (that.y +5) || that.oldy < ( that.y -5))
+    {
+
+      //alert("dragged");   // >>>>>>> DRAGGED LOGIC HERE
+    }
+    else {
+
+
+      if(target!=null)
+      {
+         //>>>>>>>> CLICKED LOGIC HERE
+
+         if((target.lines[that.num]!=null) && (that.lines[target.num]!=null) )
+         {
+            return;
+         }
+
+document.querySelector("#instr").innerHTML="ENTER distance :D";
+
+            svgblock.removeEventListener("mousemove",connector);
+            svgblock.style.cursor="auto";
+            temp.size(0);
+            temp=null;
+
+            target.lines[that.num]={l:null,from:null,to:null};
+            target.lines[that.num].from=that;
+            target.lines[that.num].to=target;
+            that.lines[target.num]={l:null,from:null,to:null};
+            that.lines[target.num].from=that;
+            that.lines[target.num].to=target;
+
+            target.lines[that.num].isltl=false;
+            that.lines[target.num].isltl=false;
+
+            getxy(that,target,true);
+
+            target.lines[that.num].l=svg.line(that.linex, that.liney, target.linex, target.liney).stroke({ width: 3, color: '#629dd1'});
+
+            that.lines[target.num].l=target.lines[that.num].l;
+
+            tempone=that;
+            temptwo=target;
+
+
+
+            that.c.fill("#fff");
+
+            templine.l.stroke({width:0});
+            templine=null;
+
+            //>><<><><<<  GET value Code here      keydowncode
+
+             weight="";
+
+
+            // $(document).unbind('keypress',start);
+
+            $(document).bind('keypress',kuchhbi);
+
+
+      }
+
+
+    }
+    target=null;
+    that=null;
+  });
+
+
+
+  this.g.on("dblclick",dblclick);
+
+}
+
+
+intialize = function(ischained)
+{
+
+        nodes.forEach(function(node)
+        {
+
+            animate.distance[node.num]={};
+              animate.distance[node.num].val=Infinity;
+              animate.distance[node.num].to=null;
+              animate.distance[node.num].from=null;
+              animate.remains[node.num]=node;
+
+        });
+
+        animate.distance[animate.root.num].val=0;
+
+        animate.tail=animate.root;
+        controller(ischained);
+
+
+}
+
+
+controller = function(ischained)
+{
+    str="";
+    document.querySelector("#show").innerHTML="";
+
+    for(var key in animate.distance)
+    {
+        //document.querySelector("#show").append("<br> key:"+key);
+
+        node=getnode(key);
+
+        if(animate.distance[key].from==null)
+        {
+            str2=" #";
+        }
+        else {
+            str2=" "+animate.distance[key].from.num;
+        }
+        str+="<br> node:"+node.num+"  distance: "+animate.distance[key].val + "  from:" + str2;
+        document.querySelector("#show").innerHTML=str;
+
+    }
+
+
+  //alert("yes");
+    animate.min=Infinity;
+
+    flag=false;
+    for(var key in animate.distance)
+    {
+        if(key in animate.remains)
+        {
+            if(animate.min>animate.distance[key].val)
+            {
+                  flag=true;
+                  animate.min=animate.distance[key].val;
+                  animate.minnode=animate.remains[key];
+
+
+            }
+        }
+    }
+
+    if(flag==false)
+    {
+        return;
+    }
+    //document.querySelector("#show").append("minnode -  "+animate.minnode.num+"  ");
+
+
+    if(animate.minnode!=animate.root)
+    {
+          //animate.distance[animate.minnode.num].from=animate.tail;
+          //alert(animate.distance[animate.minnode.num].from);
+          animate.distance[animate.distance[animate.minnode.num].from.num].to=animate.minnode;
+    }
+
+
+
+
+    animate.tail=animate.minnode;
+    delete animate.remains[animate.tail.num];
+
+
+    if(animate.tail!=animate.root)
+    {
+          animate.tail.lines[animate.distance[animate.tail.num].from.num].l.stroke({color:'#000'});
+    }
+
+
+
+
+    for(var key in animate.tail.lines)
+    {
+      //  document.querySelector("#show").append(animate.distance[key].val + " -> " + (animate.distance[animate.tail.num].val +animate.tail.lines[key].weight)+"||");
+          //animate.distance[key].val=Math.min(animate.distance[key].val,animate.distance[animate.tail.num].val +animate.tail.lines[key].weight);
+          if(animate.distance[key].val > animate.distance[animate.tail.num].val +animate.tail.lines[key].weight)
+          {
+            //  alert("gotcha");
+              animate.distance[key].val=animate.distance[animate.tail.num].val +animate.tail.lines[key].weight;
+              animate.distance[key].from=animate.tail;
+
+
+          }
+
+
+        //  document.querySelector("#show").append(key + " -> " + animate.distance[key].val);
+    }
+
+
+    if(ischained==true)
+    {
+
+    setTimeout(function(){
+
+    controller(true);
+  },2000);
+
+    }
+    return;
+
+}
+
+
+getnode= function(key)
+{
+    getter=null;
+    nodes.forEach(function(node)
+    {
+        if(node.num==key)
+        {
+
+            getter=node;
+
+        }
+    });
+    return getter;
+}
+
+
+
+start = function(ischained)
+{
+
+  if(isfirst==false)
+  {
+      controller();
+      return;
+  }
+
+    document.querySelector("#instr").innerHTML="SELECT Root Node";
+
+
+    animate=this;
+
+    this.tail=null;
+    this.remains={};
+    this.root=null;
+    this.min=Infinity;
+    this.minnode=null;
+    this.distance={};
+
+
+
+  //alert("hello");
+
+
+  nodes.forEach(function(node)
+{
+
+  node.g.off();
+
+   node.g.on('mouseover',function(mdr,node1=node)
+   {
+     /*nodes.forEach(function(checker)
+     {
+        if(checker.g==this)
+        {
+          alert("hala madrid");
+        }
+     });
+*/
+      svgblock.style.cursor='pointer';
+      node1.c.fill("#faff6b");
+      //document.querySelector("#show").append(node1.num);
+
+    });
+
+    node.g.on('mouseout',function(elc,node1=node){
+      svgblock.style.cursor='auto';
+      node1.c.fill("#ffffff");
+
+    });
+
+
+
+    node.g.on('click',function(cr7,node1=node)
+  {
+
+        animate.root=node1;
+        //document.querySelector("#show").append("node"+node1.num);
+
+        document.querySelector("#instr").innerHTML="press next and observe";
+
+        intialize(ischained);
+
+
+  });
+
+
+
+
+});
+
+
+}
+
+isfirst=true;
+caller = function()
+{
+
+  if(isfirst==true)
+  {
+        document.querySelector("#show").append("first");
+      start(false);
+      isfirst=false;
+
+  }
+  else {
+      document.querySelector("#show").append("second");
+      //document.querySelector("#instr").innerHTML="Press Next to Check";
+      controller(false);
+  }
+}
+
+
+</script>
+</body>
+</html>

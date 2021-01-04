@@ -1,0 +1,394 @@
+<html>
+<head>
+<script src="js/svg.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+
+<style>
+header {
+  text-align: center;
+  background: #06575d;
+  color: white;
+	
+  }
+
+header .container {
+	
+	font-family:Microsoft Sans Serif;	
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+hr.star-light {
+  border-color: white;
+}
+hr.star-light:after {
+  background-color: #18BC9C;
+  color: white;
+}
+
+body{
+background-color:white;
+margin:0px;
+}
+.container{
+
+}
+</style>
+	
+
+
+</head>
+<body>
+
+<header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    <div class="intro-text">
+                        <h1 class="name">Link List</h1>
+                       </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<div style="margin-top:1em">
+<form id="f" onsubmit="return fs();">
+<input type="text" id="num" autocomplete="off" class="form-control" style="display:inline-block; width:10em; margin-left:3em; margin-right:3em;">
+<input type="button" class="btn" value="insssert" onclick="ins(document.getElementById('num').value)">
+<input type="button" class="btn" value="Delete" onclick="deleteDriver(document.getElementById('num').value)">
+</form>
+</div>
+<div id="op">&nbsp;</div>
+<br>
+<center>
+<div id="status" style="font-size: 1.5em; color: #629dd1; font-family: 'Latin Modern Sans';">&nbsp;</div>
+</center>
+<div class="graph"></div>
+<script type="text/javascript">
+
+function fs() {
+	ins(document.getElementById('num').value);
+	return false;
+}
+
+var svg = new SVG(document.querySelector(".graph")).size("100%", 1000);
+
+var go = 0;
+
+function w(num) {
+			var d = new Date();
+			var n = d.getTime();
+			do
+			{
+				var dn = new Date();
+				var nn = dn.getTime();
+			}
+			while(parseInt(nn) < parseInt((parseInt(n)+num)));
+			return;
+}
+
+function line(from, to) {
+
+	this.from = from;
+	this.to = to;
+
+	this.x1 = from.x + 80;
+	this.y1 = from.y + 60;
+
+	this.x2 = to.x;
+	this.y2 = to.y + 60;
+
+	this.draw = function() {
+		this.l = svg.line(this.x1-25, this.y1, this.x2, this.y2).stroke({ width: 3, color: '#629dd1'});
+	}
+
+	this.move = function(nx1, nx2, nx3, nx4) {
+		this.x1 = nx1;
+		this.x2 = nx2;
+		this.y1 = ny1;
+		this.y2 = ny2;
+
+		this.l.animate(400).attr({'x1': x1 , 'y1' : y1, 'x2': x2, 'y2': y2});
+
+	}
+
+}
+
+function node(num) {
+	this.val = parseInt(num);
+	this.nxt = null;
+
+	this.x = 0;
+	this.y = 0;
+
+	this.g = svg.group();
+	this.r1 = svg.rect(40,40).x(0).y(40).fill("#fff").stroke({ width: 2, color: '#629dd1'});
+	this.r2 = svg.rect(40,40).x(40).y(40).fill("#629dd1").stroke({ width: 2, color: '#629dd1'});
+	this.g.add(this.r1);
+	this.g.add(this.r2);
+
+
+	var xpos = 17;
+	size = 17;
+	var ypos = 50;
+	if(this.val >= 10) {
+		xpos = 10;
+	}
+	if(this.val >=100) {
+		xpos = 5;
+	}
+	if(this.val >= 1000) {
+		size = 13;
+		ypos = 53;
+		if(this.val >=10000) {
+			xpos = 2;
+		}
+	}
+	this.g.add(svg.text(num+"").x(xpos).y(ypos).fill("#000000").stroke({ width: 0, color: '#629dd1'}).size(size));
+
+	this.move = function(nx, ny) {
+		this.x = nx;
+		this.y = ny;
+		this.g.animate(400).x(nx).y(ny);
+	}
+
+	this.highlight = function() {
+
+	}
+
+}
+
+function list() {
+	this.temp = null;
+	this.first = null;
+
+	this.insert = function(num) {
+		if(this.first == null) {
+			this.first = new node(num);
+			this.first.move(0, 200);
+		}
+		else {
+			this.n = new node(num);
+
+			//insert after temp
+			this.sodi = function() {
+				this.temp = this.first;
+				while(this.temp.nxt != null) {
+					if(this.temp.nxt.val > num) {
+						break;
+					}
+					this.temp = this.temp.nxt;
+				}
+				if(this.temp == this.first && this.first.val > num ) {
+					this.n.nxt = this.first;
+					this.first = this.n;
+				}
+				else {
+					this.n.nxt = this.temp.nxt;
+					this.temp.nxt = this.n;
+				}
+
+				if(this.n == this.first && this.n.nxt != null) {
+					//insert in beginning
+					this.n.lout = new line(this.n , this.n.nxt);
+					this.n.lout.draw();
+
+					this.t = this.n.nxt;
+					while(this.t.nxt != null) {
+						this.t.move(this.t.x+120, this.t.y);
+						this.t.lout.l.animate(400).attr({'x1': this.t.x+80, 'x2': this.t.x+120});
+						this.t = this.t.nxt;
+					}
+					this.t.move(this.t.x+120, this.t.y);
+					this.n.move(this.n.nxt.x-120, this.n.nxt.y);
+					this.n.lout.l.animate(400).attr({'x1': this.n.x+80, 'y1': this.n.nxt.y+60 , 'x2': this.n.nxt.x, 'y2': this.n.nxt.y+60});
+				}
+
+
+				if(this.n != this.first && this.n.nxt != null) {
+					//insert in middle
+					this.n.lout = new line(this.n, this.n.nxt);
+
+					this.n.lout.draw();
+
+					var parent = this;
+
+					this.temp.lout.l.animate(400).attr({'x2': this.temp.nxt.x, 'y2': this.temp.nxt.y+60});
+
+					this.tf = function() {
+						parent.t = parent.n.nxt;
+						while(parent.t.nxt != null) {
+							parent.t.move(parent.t.x+120, parent.t.y);
+							parent.t.lout.l.animate(400).attr({'x1': parent.t.x+80, 'x2': parent.t.x+120});
+							parent.t = parent.t.nxt;
+						}
+						parent.t.move(parent.t.x+120, parent.t.y);
+
+						parent.n.move(parent.n.nxt.x-120, parent.n.nxt.y);
+						parent.n.lout.l.animate(400).attr({'x1': parent.n.x+80, 'y1': parent.n.nxt.y+60, 'x2': parent.n.nxt.x, 'y2': parent.n.nxt.y+60});
+						parent.temp.lout.l.animate(400).attr({'x2': parent.n.x, 'y2': parent.n.nxt.y+60});
+					}
+
+					setTimeout(this.tf, 400);
+
+				}
+
+				if(this.n != this.first && this.n.nxt == null) {
+					//insert in end
+					this.temp.lout = new line(this.temp , this.n);
+					this.temp.lout.draw();
+
+					this.n.move(this.temp.x+120, this.temp.y);
+					this.temp.lout.l.animate(400).attr({'y1': this.n.y+60,'x2': this.n.x, 'y2': this.n.y+60});
+				}
+
+				this.p = this.first;
+				document.getElementById("op").innerHTML = " ";
+				while(this.p != null) {
+					document.getElementById("op").innerHTML += this.p.val + " ";
+					this.p = this.p.nxt;
+				}
+
+			}
+
+			this.temp = this.first;
+
+			var par = this;
+			this.highlight = function(currnode) {
+				if(currnode.nxt != null && currnode.nxt.val > num) {
+					currnode.r1.animate(400).attr({'fill' : '#ff0'}).during(function(as,sd,df,fg) {
+						document.getElementById("status").innerHTML = "NEXT";
+						setTimeout(function() {
+							document.getElementById("status").innerHTML = "&nbsp;";
+						}, 300);
+					});
+					currnode.r1.animate(400).attr({'fill' : '#fff'}).afterAll(function() {
+						document.getElementById("status").innerHTML = "INSERT";
+						setTimeout(function() {
+							document.getElementById("status").innerHTML = "&nbsp";
+						}, 1000);
+						par.sodi();
+					});
+
+					return;
+				}
+				else {
+					currnode.r1.animate(400).attr({'fill' : '#ff0'}).during(function(as,sd,df,fg) {
+						document.getElementById("status").innerHTML = "NEXT";
+						setTimeout(function() {
+							document.getElementById("status").innerHTML = "&nbsp";
+						}, 300);
+					});
+					if(currnode.nxt != null) {
+						var prev = currnode;
+						currnode = currnode.nxt;
+						prev.r1.animate(400).attr({'fill' : '#fff'}).after(function(s) {
+							par.highlight(currnode);
+						});
+					}
+					else {
+						currnode.r1.animate(400).attr({'fill' : '#fff'}).afterAll(function() {
+							document.getElementById("status").innerHTML = "INSERT";
+							setTimeout(function() {
+								document.getElementById("status").innerHTML = "&nbsp";
+							}, 1000);
+							par.sodi();
+						});
+					}
+				}
+			}
+
+			var tnode = this.first;
+			this.highlight(tnode);
+
+		}
+	}
+
+	this.del = function(num) {
+		this.temp = this.first;
+
+		if(this.first.val == num) {
+			//delete first
+			this.temp.move(this.temp.x, this.temp.y+120);
+			this.temp.move(-1000,0);
+			if(this.temp.nxt == null) {
+				this.first = null;
+			}
+			else {
+// 				alert("mvg lk");
+				this.first = this.temp.nxt;
+				this.temp.lout.l.attr({'x1' : 0,'y1' : 0, 'x2' : 0,'y2' : 0});
+				this.p = this.temp.nxt;
+				while(this.p.nxt != null) {
+					this.p.move(this.p.x-120, this.p.y);
+					this.p.lout.l.animate(400).attr({'x1' : this.p.x+80, 'y1' : this.p.y+60 , 'x2' : this.p.nxt.x-120 , 'y2' : this.p.nxt.y+60});
+					this.p = this.p.nxt;
+				}
+				this.p.move(this.p.x-120, this.p.y);
+			}
+		}
+		else {
+			while(this.temp.nxt.val != num && this.temp.nxt != null) {
+				this.temp = this.temp.nxt;
+			}
+
+			this.temp.nxt.r1.attr({'fill' : '#ff0'});
+
+			if(this.temp.nxt.nxt == null) {
+				//delete last
+// 				alert("deleting the last motherfucker");
+				this.temp.lout.l.attr({'x1' : 0,'y1' : 0, 'x2' : 0,'y2' : 0});
+				this.temp.nxt.move(this.temp.x, this.temp.y+120);
+				this.temp.nxt.move(-1000,0);
+				this.temp.nxt = null;
+			}
+			else {
+				//delete middle
+				this.temp.nxt.move(this.temp.nxt.x, this.temp.nxt.y+120);
+				this.temp.lout.l.animate(400).attr({'x2' : this.temp.nxt.x,'y2' : this.temp.nxt.y+60});
+				this.temp.nxt.lout.l.animate(1).attr({'x1' : this.temp.nxt.x+80,'y1' : this.temp.nxt.y+60});
+				this.temp.nxt.lout.l.animate(1).attr({'x1' : 0,'y1' : 0, 'x2' : 0,'y2' : 0});
+
+				this.p = this.temp.nxt.nxt;
+				while(this.p.nxt != null) {
+// 					alert("moving : " + this.p.val);
+					this.p.move(this.p.x-120, this.p.y);
+					this.p.lout.l.animate(400).attr({'x1' : this.p.x+80 , 'x2' : this.p.nxt.x-120});
+					this.p = this.p.nxt;
+				}
+				this.p.move(this.p.x-120, this.p.y);
+				this.temp.nxt.move(-1200, this.temp.nxt.nxt.y);
+				this.temp.nxt = this.temp.nxt.nxt;
+				this.temp.lout.l.animate(400).attr({'x2' : this.temp.nxt.x,'y2' : this.temp.nxt.y+60});
+			}
+		}
+
+		this.p = this.first;
+				document.getElementById("op").innerHTML = " ";
+				while(this.p != null) {
+					document.getElementById("op").innerHTML += this.p.val + " ";
+					this.p = this.p.nxt;
+				}
+	}
+}
+
+
+function ins(num) {
+	l.insert(num);
+	document.getElementById("num").focus();
+	document.getElementById("num").value = "";
+}
+
+function deleteDriver(num) {
+	l.del(num);
+	document.getElementById("num").focus();
+	document.getElementById("num").value = "";
+}
+
+var l = new list();
+
+</script>
+</body>
+</html>

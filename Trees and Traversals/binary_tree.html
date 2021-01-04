@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/svg.js"></script>
+<style>
+header {
+  text-align: center;
+  background: #06575d;
+  color: white;
+
+  }
+
+header .container {
+
+	font-family:Microsoft Sans Serif;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+hr.star-light {
+  border-color: white;
+}
+hr.star-light:after {
+  background-color: #18BC9C;
+  color: white;
+}
+
+body{
+background-color:white;
+margin:0px;
+}
+.container{
+
+}
+</style>
+
+</head>
+
+<body id="page-top" class="index">
+
+<header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="intro-text">
+                        <h1 class="name">Tree</h1>
+                       </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+  <form id='f' onsubmit="return fs()">
+  <div class="row" style="margin-top:1em;">
+  <input type="text" id="num"  class="form-control" style="display:inline-block; width:10em; margin-left:3em; margin-right:3em;">
+  <button type="button" class="btn"  onclick="ins(document.getElementById('num').value)">insert</button>
+  <input type="button" class="btn" value="inorder" onclick="inorder()">
+  <input type="button" class="btn" value="preorder" onclick="preorder()">
+  <input type="button" class="btn" value="postorder" onclick="postorder()">
+  <input type="button" class="btn" value="delete" onclick="del(document.getElementById('num').value)">
+</div>
+</form>
+  <div class="graph"></div>
+<script type="text/javascript">
+
+function fs() {
+  ins(document.getElementById("num").value);
+  return false;
+}
+
+var svg = new SVG(document.querySelector(".graph")).size("100%", 1000);
+
+
+function line(from,to)
+{
+
+          this.from=from;
+          this.to=to;
+          this.isdrawn=false;
+
+
+          this.remove = function()
+          {
+              this.l.animate(200).stroke({'width':0});
+
+          }
+//         alert(this.from.val);
+
+          this.findxy = function()
+          {
+
+
+
+
+            this.x1=this.from.x;
+            this.x2=this.to.x;
+            this.y1=this.from.y;
+            this.y2=this.to.y;
+
+
+              this.x1+=(this.from.radius/2);
+              this.x2+=(this.to.radius/2);
+              this.y1+=(this.from.radius/2);
+              this.y2+=(this.to.radius/2);
+
+
+              this.length= Math.sqrt( (this.x2-this.x1)*(this.x2-this.x1) + (this.y2-this.y1)*(this.y2-this.y1) );
+
+              this.x2+= ((this.to.radius/2)*(this.x1-this.x2))/this.length;
+              this.y2+= ((this.to.radius/2)*(this.y1-this.y2))/this.length;
+
+
+              this.length= Math.sqrt( (this.x2-this.x1)*(this.x2-this.x1) + (this.y2-this.y1)*(this.y2-this.y1) );
+
+              this.x1+= ((this.from.radius/2)*(this.x2-this.x1))/this.length;
+              this.y1+= ((this.from.radius/2)*(this.y2-this.y1))/this.length;
+
+
+
+
+
+              //alert("temp :"+this.x1 + "  perm :"+ this.from.x);
+          }
+
+
+          this.draw = function() {
+
+
+            this.findxy();   // >>>>>>>>>>calling the function
+
+            //alert(this.x1);
+
+              if(this.isdrawn==false)
+              {
+      		      this.l = svg.line(this.x1, this.y1, this.x2, this.y2).stroke({ width: 3, color: '#629dd1'});
+                this.isdrawn=true;
+              }
+              else {
+                //alert(this.y1);
+                //alert("from ("+ this.x1+ " , "+ this.y1 + ")   to: (" + this.x2 + " , "+this.y2 + ");" );
+              //alert("from : "+ this.from.val+ "  to: " + this.to.val);
+                this.l.animate(300).attr({'x1': this.x1, 'y1' : this.y1, 'x2' : this.x2, 'y2' : this.y2});
+              }
+
+        }
+
+          this.moveme = function(nx1, nx2, nx3, nx4) {
+                    this.l.animate(300).attr({'x1': x1 , 'y1' : y1, 'x2': x2, 'y2': y2});
+            }
+
+
+          this.fromto = function(from,to){
+                  this.from=from;
+                  this.to=to;
+
+                    this.findxy();   //>>>>>>>>>>calling the function
+                    this.l.animate(400).attr({'x1': this.x1, 'y2' : this.y1, 'x2' : this.x2, 'y2' : this.y2});
+
+          }
+
+
+
+
+}
+
+
+
+function node(num,parent) {
+	this.val = num;
+	this.left = null;
+  this.right = null;
+  this.parent=parent;
+  this.radius=40;
+
+  this.leftline=null;
+  this.rightline=null;
+
+this.diffx=0;
+this.diffy=0;
+
+  if(this.parent==null)
+  {
+    	this.x = 620;
+    	this.y = 40;
+  }
+  else {
+    this.x = parent.x;
+    this.y = parent.y;
+  }
+
+  this.stx=this.x;
+  this.sty=this.y;
+
+//>>>>>>> Logic to get string in center of the circle
+this.temp=0;
+this.tempy=0;
+if(this.val<10)
+{
+  this.temp=16;
+}
+else {
+  this.temp=8;
+}
+
+if(this.val>=100)
+{
+    this.temppp=this.val;
+    while(this.temppp/10 > 10)
+    {
+        this.radius+=10;
+        this.temppp /=10;
+    }
+}
+
+this.tempy=this.radius/2;
+this.tempy-=10;
+
+//>>>>>>>>>>>>>>>>>>>>>>>ends here
+
+  //alert("x:" + this.x + "  y:" + this.y);
+
+	this.g = svg.group();
+	//alert(num.toString().getComputedTextLength());
+  this.c = svg.circle(this.radius).x(this.x).y(this.y).fill("#fff").stroke("#99f");
+	this.g.add(this.c);
+
+  this.g.add(svg.text(this.val+"").x(this.x+this.temp).y(this.y+this.tempy).fill("#00aa00").stroke("#000000").size(17));
+
+
+
+
+this.insertHigh = function(num)
+{
+    //alert("highligh  :"+ num);
+    this.c.animate(100).attr({'fill':'#aaf'}).delay(300).animate(100).attr({'fill':'#fff'}).afterAll(function(){t.controller(num);});
+
+}
+
+this.orderHigh = function()
+{
+this.c.animate(100).attr({'fill':'#aaf'}).delay(300).animate(100).attr({'fill':'#fff'}).afterAll(function(){t.highlogic();});
+}
+
+this.moveonly = function(dest)
+{
+    //alert("dest.x " + dest.x + " this.x "+ this.x);
+
+    this.stackmove((dest.x-this.x),(dest.y-this.y));
+
+    this.moveme();
+}
+
+this.moveto = function(dest)
+{
+  //  alert("hello");
+
+
+//alert((dest.y-this.y));
+
+    animatenode(this,(dest.x-this.x),(dest.y-this.y),false);
+
+    animatenode(this,0,0,true);
+
+  }
+
+  this.moveme = function()
+  {
+  //  alert("diffx : "+this.diffx + "  diffy : " + this.diffy);
+
+    this.g.animate({ease:'>',duration:400}).x(this.x+this.diffx - this.stx).y(this.diffy + this.y - this.sty);
+    this.x += this.diffx;
+    this.y += this.diffy;
+
+    this.diffx=0;
+    this.diffy=0;
+
+    if(this.parent!=null)
+    {
+        if(this==this.parent.right)
+          {
+              //  its right node of parent
+
+              this.parent.rightline.draw();
+          }
+          else {
+              //    its left node of parent
+              this.parent.leftline.draw();
+          }
+
+    }
+
+  }
+
+  this.delnode = function()
+  {
+
+  //  alert("in delnode");
+    ////>>>>>>>>>>>   IF node  is the LEAFey node :D
+      if(this.right==null  && this.left==null)
+      {
+      //    alert("no way");
+          ///  >>>>    CHECK if its right or left CHILD
+
+          if(this.parent==null)
+          {
+                t.root=null;
+          }
+          else{
+
+            if(this==this.parent.right)
+            {
+                this.parent.right=null;
+                this.parent.rightline.remove();
+
+            }
+            else if(this==this.parent.left)
+            {
+              this.parent.left=null;
+              this.parent.leftline.remove();
+            }
+            else {
+
+            }
+          }
+            this.g.animate(2000).x(-1000);
+
+      }
+
+      if(((this.right==null) && (this.left!=null)) || ((this.left==null) && (this.right!=null)))
+      {
+
+            if(this==t.root)
+            {
+              this.g.animate(2000).x(-2000);
+
+                this.temp3={x:0,y:0};
+                this.temp3.x=this.x;
+                this.temp3.y=this.y;
+
+                  if(this.left!=null)
+                  {
+                  t.root=this.left;
+                  this.left.parent=null;
+                  this.leftline.remove();
+                  this.left.moveto(this.temp3);
+                }
+                else {
+                  t.root=this.right;
+                  this.right.parent=null;
+                  this.rightline.remove();
+                  this.right.moveto(this.temp3);
+                }
+                return;
+
+
+            }
+
+            if(this==this.parent.right)
+            {
+              if((this.right==null) && (this.left!=null))
+              {
+                    this.parent.right=this.left;
+                    this.leftline.remove();
+                    this.left.parent=this.parent;
+                    this.left.moveto(this);
+                    this.parent.rightline.fromto(this.parent,this.left);
+
+                    this.g.animate(2000).x(-2000);
+              }
+              else {
+                    this.parent.right=this.right;
+                    this.rightline.remove();
+                    this.right.parent=this.parent;
+                    this.right.moveto(this);
+                    this.parent.rightline.fromto(this.parent,this.right);
+                    this.g.animate(2000).x(-2000);
+              }
+            }
+            else if(this==this.parent.left)
+            {
+              if((this.right==null) && (this.left!=null))
+              {
+                  this.parent.left=this.left;
+                  this.leftline.remove();
+                  this.left.parent=this.parent;
+                  this.left.moveto(this);
+                  this.parent.leftline.fromto(this.parent,this.left);
+                  this.g.animate(2000).x(-2000);
+              }
+              else {
+                  this.parent.left=this.right;
+
+                  this.rightline.remove();
+                  this.right.parent=this.parent;
+                  this.right.moveto(this);
+                  this.parent.leftline.fromto(this.parent,this.right);
+                  this.g.animate(2000).x(-2000);
+
+              }
+
+
+            }
+
+animatenode(t.root,0,0,true);
+
+
+      }
+
+
+      if(this.right!=null && this.left!=null)
+      {
+
+        this.success=this;
+
+        this.success=this.right;
+
+        while(this.success.left!=null)
+        {
+            this.success=this.success.left;
+        }
+
+        //alert(this.success.val);
+
+        if(this.success == this.right)
+        {
+            if(this==t.root)
+            {
+                t.root=this.success;
+            }
+            else {
+
+                if(this.parent.left==this)
+                {
+                    this.parent.left=this.success;
+
+                }
+                else {
+                    this.parent.right=this.success;
+
+                }
+
+            }
+            this.success.parent=this.parent;
+
+            this.temp3= {x:0,y:0};
+            this.temp3.x=this.x;
+            this.temp3.y=this.y;
+            this.success.moveto(this.temp3);
+
+
+            if(this.parent!=null)
+            {
+              if(this.parent.right==this.success)
+              {
+
+                  this.parent.rightline.fromto(this.parent,this.success);
+                }
+                else {
+                    this.parent.leftline.fromto(this.parent,this.success);
+                }
+          }
+            this.success.left=this.left;
+            this.success.left.parent=this.success;
+            this.leftline.remove();
+            this.rightline.remove();
+
+            this.g.animate(2000).x(-2000);
+
+            this.success.leftline=new line(this.success,this.success.left);
+
+            animatenode(t.root,0,0,true);
+
+
+
+        }
+        else {
+
+
+              this.rightline.remove();
+              this.leftline.remove();
+
+              this.temp3={x:0,y:0};
+
+              this.temp3.x=this.x;
+              this.temp3.y=this.y;
+
+
+              this.temp4={x:0,y:0};
+              this.temp4.x=this.success.x;
+              this.temp4.y=this.success.y;
+
+              this.g.animate(2000).x(-1000);
+
+
+
+              //// >>>>>>>   set right child of success to parent of the success
+
+
+              this.success.moveonly(this.temp3);
+
+              if(this.success.right!=null)
+              {
+                    this.success.parent.left=this.success.right;
+                    this.success.rightline.remove();
+                    this.success.right.parent=this.success.parent;
+                    this.success.right.moveto(this.temp4);
+                    this.success.parent.leftline.fromto(this.success.parent,this.success.right);
+
+              }
+              else {
+                    this.success.parent.left=null;
+                    this.success.parent.leftline.remove();
+              }
+
+
+
+
+              //>>>>>>>>>>>> set the success to the this node.
+
+              this.success.parent=this.parent;
+              if(this==t.root)
+              {
+                t.root=this.success;
+              }
+              else {
+                if(this.parent.left==this)
+                {
+                    this.parent.left=this.success;
+                    this.parent.leftline.fromto(this.parent,this.success);
+                }
+                else {
+                    this.parent.right=this.success;
+                    this.parent.rightline.fromto(this.parent,this.success);
+                }
+
+              }
+
+              this.success.left=this.left;
+              this.success.left.parent=this.success;
+
+              this.success.right=this.right;
+              this.success.right.parent=this.success;
+
+              this.success.leftline=new line(this.success,this.success.left);
+              this.success.rightline=new line(this.success,this.success.right);
+
+              animatenode(t.root,0,0,true);
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+      }
+
+shapeofyou(t.root);
+animatenode(t.root,0,0,true);
+
+
+  }
+
+
+  this.stackmove = function(nx,ny)
+  {
+    //  alert("in move" + nx + " : " + ny);
+      this.diffx+=nx;
+      this.diffy+=ny;
+
+    //  alert("val : " + this.val + " diffx : "+this.diffx+ "diffy :"+this.diffy);
+
+  }
+
+}
+
+function tree() {
+    this.root=null;
+    this.temp=null;
+
+    this.highlighter=null;
+
+    this.highstack = [];
+
+this.getnode = function(num)
+{
+
+    if(this.root==null)
+    {
+        return null;
+    }
+
+    this.highlighter=this.root;
+
+
+    while(this.highlighter !=null)
+    {
+
+        //alert("node :" + this.highlighter.val + "  num :" + num);
+
+
+        if(this.highlighter.val == num)
+        {
+          //  alert("found :D");
+            return(this.highlighter);
+
+        }
+        else {
+
+            if(this.highlighter.val < num)
+            {
+                if(this.highlighter.right!=null)
+                {
+                    this.highlighter=this.highlighter.right;
+                }
+                else {
+                    return(null);
+                }
+
+            }
+            else {
+
+              if(this.highlighter.left!=null)
+              {
+                  this.highlighter=this.highlighter.left;
+              }
+              else {
+                  return(null);
+              }
+
+            }
+
+        }
+
+    }
+
+}
+
+this.dellogic = function(num)
+{
+
+    this.highlighter=this.getnode(num);
+//alert(this.highlighter.val);
+    this.highlighter.delnode();
+
+
+
+}
+
+
+this.highlogic = function()
+{
+
+    this.highlighter=this.highstack.shift();
+
+    if(this.highlighter != undefined)
+    {
+
+
+  //    alert(this.highlighter.val);
+      this.highlighter.orderHigh();
+    }
+}
+
+
+
+
+this.controller = function(num)
+{
+
+
+  if(this.root==null)
+  {
+  //  alert("]");
+      this.insert(num);
+      return;
+  }
+
+
+
+    if(this.highlighter==null)
+    {
+        this.highlighter=this.root;
+        this.highlighter.insertHigh(num);
+        return;
+    }
+
+
+//alert(this.highlighter.val);
+
+    if(this.highlighter.val > num)
+    {
+        if(this.highlighter.left != null)
+        {
+            this.highlighter=this.highlighter.left;
+
+            this.highlighter.insertHigh(num);
+        }
+        else {
+          //>>>>>>>>>>>>>> call function here
+
+          this.insert(num);
+
+        }
+    }
+    else {
+
+      ///>>>>>>>><<<<<<< hightlight Right uk.. :D
+
+          if(this.highlighter.right != null)
+          {
+              this.highlighter=this.highlighter.right;
+              this.highlighter.insertHigh(num);
+          }
+          else {
+            //>>>>>>>>>>>>>> call function here
+
+            this.insert(num);
+          }
+
+
+    }
+
+
+}
+
+
+
+this.insert = function(num){
+    if(this.root==null)
+    {
+        this.temp=new node(num,null);
+        this.root=this.temp;
+    }
+    else {
+
+    this.temp=this.root;
+
+    while(true)
+    {
+          if(num< this.temp.val)
+          {
+              if(this.temp.left==null)
+              {
+                    this.temp.left = new node(num,this.temp);
+                    this.checkme(this.temp.left,true,0);
+
+                    this.temp.leftline= new line(this.temp,this.temp.left)
+                    //this.temp.left.moveme(-100,50);
+                    break;
+              }
+              else {
+
+                  this.temp=this.temp.left;
+
+              }
+
+          }
+          else{
+              if(this.temp.right==null)
+              {
+
+                      this.temp.right = new node(num,this.temp);
+                      this.checkme(this.temp.right,true,0);
+
+                      this.temp.rightline = new line(this.temp,this.temp.right);
+
+                      break;
+              }
+              else {
+                  this.temp=this.temp.right;
+              }
+
+          }
+
+    }
+
+
+    //t.highlighter=null;
+    animatenode(this.root,0,0,true);
+
+
+
+  }
+  }
+
+  this.checkme = function(checknode,isnew,olddiff)
+  {
+      this.isnew=isnew;
+      this.connector=null;
+      this.traveler=checknode;
+
+      this.tempint=0;
+
+      if(isnew==true)
+      {
+
+        this.tempint=100;
+      }
+
+
+        //alert(this.tempint);
+      if(checknode.parent==null)
+      {
+        return;
+      }
+
+
+      if(checknode==this.traveler.parent.left)
+      {
+          //  new node is lefty of parent
+
+
+
+          while(this.traveler.parent!=null)
+          {
+            if(this.traveler.parent.left==this.traveler)
+            {
+              this.traveler=this.traveler.parent;
+
+            }
+            else {
+              break;
+
+            }
+          }
+
+          this.connector=this.traveler.parent;
+
+          if(this.connector==null)
+          {
+            //alert("this is not the end");
+
+            if(isnew==true)
+            {
+
+            checknode.stackmove(-100,70);
+            }
+            return;
+          }else {
+
+
+            if(isnew==false)
+            {
+
+            //  alert("("+checknode.val+")"+checknode.x + " - "+ this.tempint + " <= " +"("+this.connector.val+")" +this.connector.x);
+
+            }
+
+
+          if((checknode.x+checknode.diffx)-this.tempint<=this.connector.x+this.connector.diffx)
+          {
+              //MOVE all the the NODES To left ... xD
+              if(isnew==false)
+              {
+
+              }
+
+              this.diff= (this.connector.x+this.connector.diffx - (checknode.x+checknode.diffx - this.tempint));
+              //alert(this.diff);
+              //alert(" right slide these : " + this.connec/tor.right.val);
+              animatenode(this.connector.right,this.diff+50,0,false);
+
+              this.traveler=this.connector;
+              while(this.traveler.right!=null)
+              {
+                    this.traveler=this.traveler.right;
+              }
+
+              if(this.isnew==true)
+              {
+                checknode.stackmove(-100,70);
+              }
+            //  alert(this.traveler.val);
+        //    alert(this.traveler.val);
+              this.checkme(this.traveler,false,this.diff);
+          }
+          else {
+            if(this.isnew==true)
+            {
+              checknode.stackmove(-100,70);
+            }
+                //checknode.stackmove(-100,70);
+                //alert("noooo");
+          }
+        }
+
+  }else {
+    //      Whole code for the Right
+          while(this.traveler.parent!=null)
+          {
+            if(this.traveler.parent.right==this.traveler)
+            {
+              this.traveler=this.traveler.parent;
+
+            }
+            else {
+              break;
+
+            }
+          }
+
+          this.connector=this.traveler.parent;
+
+          if(this.connector==null)
+          {
+
+
+            if(isnew==true)
+            {
+            checknode.stackmove(100,70);
+            }
+            return;
+          }else {
+
+
+            if(isnew==false)
+            {
+
+            //  alert(checknode.x + " + "+ this.tempint + " >= " + this.connector.x);
+
+            }
+
+
+          if(checknode.x+checknode.diffx+this.tempint>=this.connector.x+this.connector.diffx)
+          {
+              //MOVE all the the NODES from left ... xD
+
+              this.diff= ((checknode.x+checknode.diffx + this.tempint) - this.connector.x - this.connector.diffx );
+              //alert(" left slide these : " + this.connector.left.val);
+              animatenode(this.connector.left,-this.diff-50,0,false);
+
+
+
+
+              this.traveler=this.connector;
+              //this.traveler=this.traveler.parent;
+
+              //alert(this.traveler);
+
+              while(this.traveler.left!=null)
+              {
+                  this.traveler=this.traveler.left;
+              }
+
+              if(this.isnew==true)
+              {
+
+                checknode.stackmove(100,70);
+              }
+
+              //alert(this.traveler.val);
+              //alert(this.traveler.val);
+              this.checkme(this.traveler,false,this.diff);
+
+
+          }
+          else {
+            if(this.isnew==true)
+            {
+
+              checknode.stackmove(100,70);
+            }
+            //  checknode.stackmove(100,70);
+                //  alert("noooo");
+          }
+          }
+      }
+
+  }
+
+
+
+}
+
+
+shapeofyou = function(node)
+{
+    if(node.right!=null)
+    {
+        node.right.diffx=(node.x+node.diffx+100)-(node.right.x+node.right.diffx);
+    }
+
+    if(node.left!=null)
+    {
+        node.left.diffx=(node.x+node.diffx-100)-(node.left.x+node.left.diffx);
+    }
+
+    if(node.right==null && node.left==null)
+    {
+        t.checkme(node,false,0);
+    }
+
+
+    if(node.right!=null)
+    {
+        shapeofyou(node.right);
+    }
+
+    if(node.left!=null)
+    {
+        shapeofyou(node.left);
+    }
+
+}
+
+
+
+stackloader = function(highlighter,order)
+{
+
+      if(order==2)
+      {
+
+        if(highlighter==null)
+        {
+            highlighter=t.root;
+            //this.stackloader(order);
+        }
+
+          t.highstack.push(highlighter);
+
+
+
+            if(highlighter.left!=null)
+            {
+
+                stackloader(highlighter.left,order);
+
+            }
+
+            if(highlighter.right!=null)
+            {
+
+                stackloader(highlighter.right,order);
+
+            }
+
+      }
+      else if(order==1)
+      {
+
+
+
+                    if(highlighter==null)
+                    {
+                        highlighter=t.root;
+                        //this.stackloader(order);
+                    }
+
+
+
+
+                        if(highlighter.left!=null)
+                        {
+
+                            stackloader(highlighter.left,order);
+
+                        }
+                        t.highstack.push(highlighter);
+
+                        if(highlighter.right!=null)
+                        {
+
+                            stackloader(highlighter.right,order);
+
+                        }
+
+
+      }
+      else if(order==3)
+      {
+
+
+                            if(highlighter==null)
+                            {
+                                highlighter=t.root;
+                                //this.stackloader(order);
+                            }
+
+
+
+
+                                if(highlighter.left!=null)
+                                {
+
+                                    stackloader(highlighter.left,order);
+
+                                }
+
+
+                                if(highlighter.right!=null)
+                                {
+
+                                    stackloader(highlighter.right,order);
+
+                                }
+
+                                t.highstack.push(highlighter);
+
+      }
+      else {
+
+      }
+
+
+
+}
+
+
+
+
+animatenode =function(nodeaf,diffx,diffy,isanime)
+{
+
+
+  if(isanime==true)
+  {
+
+    //    alert(nodeaf.val);
+
+    nodeaf.moveme();
+
+    if(nodeaf.left !=null)
+    {
+      animatenode(nodeaf.left,0,0,true);
+    }
+    if(nodeaf.right !=null){
+      animatenode(nodeaf.right,0,0,true);
+    }
+
+    return;
+
+  }
+
+
+
+    if(nodeaf==null)
+    {
+        return;
+    }
+
+    else {
+    //alert("diff : " +diff);
+
+    nodeaf.stackmove(diffx,diffy);
+
+
+
+      if(nodeaf.left !=null)
+      {
+        animatenode(nodeaf.left,diffx,diffy,false);
+      }
+      if(nodeaf.right !=null){
+        animatenode(nodeaf.right,diffx,diffy,false);
+      }
+
+  }
+}
+
+function ins(num) {
+
+  if(num==null)
+  {
+      return;
+  }
+
+  num=parseInt(num);
+
+	//t.insert(num);
+t.highlighter=null;
+  t.controller(num);
+  document.getElementById('num').focus();
+  document.getElementById('num').value="";
+
+}
+
+function inorder(order)
+{
+  t.highlighter=null;
+    stackloader(t.root,1);
+t.highlighter=null;
+t.highlogic();
+
+}
+
+function preorder(order)
+{
+  t.highlighter=null;
+stackloader(t.root,2);
+t.highlighter=null;
+t.highlogic();
+}
+function postorder(order)
+{
+
+  t.highlighter=null;
+    stackloader(t.root,3);
+t.highlighter=null;
+t.highlogic();
+}
+
+function del(num)
+{
+    num=parseInt(num);
+    t.highlighter=null;
+    t.dellogic(num);
+
+}
+
+var t = new tree();
+
+</script>
+</body>
+</html>
