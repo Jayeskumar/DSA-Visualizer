@@ -1,9 +1,9 @@
 # DSA-Visualizer
  DSA visualizer
  
- Data Strutures and Algorithm Visualize Made Using HTML, CSS and Java Script. Data Structures are Implemented using Java Script. 
+ Data Structures and Algorithm Visualize Made Using HTML, CSS and Java Script. Data Structures are Implemented using Java Script. 
  Visualization is Provided in the most intutive way.
- Implemented Various Searching and Sorting Techniques.
- Implemented Graph Algorithms like Djakstra's Algorithm.
- Implemented Linear Data Structures like Stacks an Queues.  
+This includes  Various Searching and Sorting Techniques, Graph Algorithms like Djakstra's Algorithm.
+Operations in Linear Data Structures like Stacks an Queues and Various Tree Traversal Techniques.
+ 
 test at http://just2test.in/jay/algo/
